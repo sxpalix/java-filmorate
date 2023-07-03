@@ -13,7 +13,7 @@ import java.util.List;
 public class UserController {
     private final UserValidator users = new UserValidator();
     @GetMapping
-    public List<User> getUsers(){
+    public List<User> getUsers() {
         return users.getUsers();
     }
 

@@ -15,7 +15,7 @@ public class FilmController {
     FilmValidator films = new FilmValidator();
 
     @GetMapping
-    public List<Film> getFilms(){
+    public List<Film> getFilms() {
         return films.getFilms();
     }
 

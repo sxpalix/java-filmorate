@@ -11,7 +11,7 @@ public class UserValidator {
     private final Map<Integer, User> users = new HashMap<>();
     private int id = 1;
 
-    public List<User> getUsers(){
+    public List<User> getUsers() {
         return new ArrayList<>(users.values());
     }
 

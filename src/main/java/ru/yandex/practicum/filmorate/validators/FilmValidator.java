@@ -13,7 +13,7 @@ public class FilmValidator {
     private final Map<Integer, Film> films = new HashMap<>();
     private int id = 1;
 
-    public List<Film> getFilms(){
+    public List<Film> getFilms() {
         return new ArrayList<>(films.values());
     }
 
