@@ -18,7 +18,7 @@ public class FilmValidator {
     }
 
     public Film postFilm(Film film) throws ValidationException {
-        if (film.getName().isEmpty()){
+        if (film.getName().isEmpty()) {
             throw new ValidationException("Название не может быть пустым.");
         }
         if (film.getDescription().length() > 201) {
@@ -31,13 +31,13 @@ public class FilmValidator {
             throw new ValidationException("Продолжительность фильма должна быть положительной.");
         }
         film.setId(id);
-        id ++;
+        id++;
         films.put(film.getId(), film);
         return film;
     }
 
     public Film putFilm(Film film) throws ValidationException {
-        if (film.getName().isEmpty()){
+        if (film.getName().isEmpty()) {
             throw new ValidationException("Название не может быть пустым.");
         }
         if (film.getDescription().length() > 201) {
