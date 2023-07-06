@@ -17,8 +17,8 @@ public class UserValidator {
         return new ArrayList<>(users.values());
     }
 
-    public User postUser(User user) {
-        if (user.getName().isBlank()) {
+    public User postUser(User user) throws ValidationException {
+        if (user.getName() == null) {
             user.setName(user.getLogin());
             user.setId(id++);
             users.put(user.getId(), user);
@@ -32,7 +32,7 @@ public class UserValidator {
     }
 
     public User putUser(User user) throws ValidationException {
-        if (user.getName().isBlank()) {
+        if (user.getName() == null) {
             user.setName(user.getLogin());
         }
         if (users.containsKey(user.getId())) {
