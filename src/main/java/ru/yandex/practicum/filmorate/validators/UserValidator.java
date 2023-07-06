@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.validators;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +16,7 @@ public class UserValidator {
         return new ArrayList<>(users.values());
     }
 
-    public User postUser(User user) throws ValidationException {
+    public User postUser(User user) {
         if (user.getName() == null) {
             user.setName(user.getLogin());
             user.setId(id++);
