@@ -17,7 +17,7 @@ public class UserValidator {
     }
 
     public User postUser(User user) {
-        if (user.getName() == null) {
+        if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
             user.setId(id++);
             users.put(user.getId(), user);
@@ -31,7 +31,7 @@ public class UserValidator {
     }
 
     public User putUser(User user) throws ValidationException {
-        if (user.getName() == null) {
+        if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
         if (users.containsKey(user.getId())) {

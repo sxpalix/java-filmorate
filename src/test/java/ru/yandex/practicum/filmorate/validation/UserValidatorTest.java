@@ -13,13 +13,13 @@ public class UserValidatorTest {
     @Test
     public void shouldReturnLoginException() throws ValidationException {
         User user = new User(1, "notEmail@mail.com", "sxpailx", "", LocalDate.parse("2022-05-05"));
-        validator.putUser(user);
-        assertEquals("Id not valid", validator.getUsers().get(0).getName());
+        validator.postUser(user);
+        assertEquals("sxpailx", validator.getUsers().get(0).getName());
     }
 
     @Test
     public void shouldReturnException() {
-        User user = new User(1, "notEmail@mail.com", "sxpailx", "name", LocalDate.parse("2022-05-05"));
+        User user = new User(2, "notEmail@mail.com", "sxpailx", "name", LocalDate.parse("2022-05-05"));
         final Exception exception = assertThrows(
                 ValidationException.class,
                 () -> {
