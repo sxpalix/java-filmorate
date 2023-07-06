@@ -18,41 +18,27 @@ public class FilmValidator {
     }
 
     public Film postFilm(Film film) throws ValidationException {
-        if (film.getName().isEmpty()) {
-            throw new ValidationException("Название не может быть пустым.");
+        if (film.getReleaseDate() == null || film.getReleaseDate().isBefore(LocalDate.parse("1895-12-28"))) {
+            log.error("Release dare shouldn't be earlier 28.12.1895, or empty values");
+            throw new ValidationException("Release dare shouldn't be earlier 28.12.1895, or empty values");
         }
-        if (film.getDescription().length() > 201) {
-            throw new ValidationException("Максимальная длина описания — 200 символов.");
-        }
-        if (film.getReleaseDate().isBefore(LocalDate.parse("1895-12-28"))) {
-            throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года.");
-        }
-        if (film.getDuration() < 1) {
-            throw new ValidationException("Продолжительность фильма должна быть положительной.");
-        }
-        film.setId(id);
-        id++;
+        film.setId(id++);
         films.put(film.getId(), film);
+        log.info("Task added successfully");
         return film;
     }
 
     public Film putFilm(Film film) throws ValidationException {
-        if (film.getName().isEmpty()) {
-            throw new ValidationException("Название не может быть пустым.");
-        }
-        if (film.getDescription().length() > 201) {
-            throw new ValidationException("Максимальная длина описания — 200 символов.");
-        }
-        if (film.getReleaseDate().isBefore(LocalDate.parse("1895-12-28"))) {
-            throw new ValidationException("Дата релиза — не раньше 28 декабря 1895 года.");
-        }
-        if (film.getDuration() < 1) {
-            throw new ValidationException("Продолжительность фильма должна быть положительной.");
+        if (film.getReleaseDate() == null || film.getReleaseDate().isBefore(LocalDate.parse("1895-12-28"))) {
+            log.error("Release dare shouldn't be earlier 28.12.1895, or empty values");
+            throw new ValidationException("Release dare shouldn't be earlier 28.12.1895, or empty values");
         }
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
+            log.info("Update was successful");
         } else {
-            throw new ValidationException("Обновление фильма с несуществующим id.");
+            log.error("Id not valid");
+            throw new ValidationException("Id not valid");
         }
         return film;
     }

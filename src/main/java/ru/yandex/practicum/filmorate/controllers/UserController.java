@@ -15,16 +15,19 @@ public class UserController {
 
     @GetMapping
     public List<User> getUsers() {
+        log.info("GET request");
         return users.getUsers();
     }
 
     @PostMapping
     public User postUser(@Valid @RequestBody User user) throws ValidationException {
+        log.info("Post Request");
         return users.postUser(user);
     }
 
     @PutMapping
     public User putUser(@Valid @RequestBody User user) throws ValidationException {
+        log.info("PUT request");
         return users.putUser(user);
     }
 }

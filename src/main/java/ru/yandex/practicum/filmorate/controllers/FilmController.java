@@ -12,20 +12,23 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    FilmValidator films = new FilmValidator();
+    private final FilmValidator films = new FilmValidator();
 
     @GetMapping
     public List<Film> getFilms() {
+        log.info("GET Request");
         return films.getFilms();
     }
 
     @PostMapping
     public Film postFilm(@Valid @RequestBody Film film) throws ValidationException {
-            return films.postFilm(film);
+        log.info("POST Request");
+        return films.postFilm(film);
     }
 
     @PutMapping
     public Film putFilm(@Valid @RequestBody Film film) throws ValidationException {
+        log.info("PUT Request");
         return films.putFilm(film);
     }
 }

@@ -11,69 +11,40 @@ public class FilmValidatorTest {
     private static FilmValidator validator = new FilmValidator();
 
     @Test
-    public void shouldReturnNameException() {
-         Film film = new Film("", "dasd", LocalDate.parse("1999-12-28"), 12);
+    public void shouldReturnException() {
+        Film film = new Film();
         final Exception exception = assertThrows(
                 ValidationException.class,
         () -> {
                     validator.postFilm(film);
                 }
         );
-        assertEquals("Название не может быть пустым.", exception.getMessage());
+        assertEquals("Release dare shouldn't be earlier 28.12.1895, or empty values", exception.getMessage());
     }
 
     @Test
-    public void shouldReturnDescriptionSizeException() {
-        String description = "";
-        for (int i = 0; i < 20; i++) {
-            description = description + "tenCharTen";
-        }
-        Film film = new Film("QWEDSAsda", description + "tt",
-                LocalDate.parse("1999-12-28"), 12);
+    public void shouldReturnTimeException() {
+        Film film = new Film(1, "QWEDSAsda", "asdas",
+                LocalDate.parse("1883-12-28"), 12, 5);
         final Exception exception = assertThrows(
                 ValidationException.class,
                 () -> {
                     validator.postFilm(film);
                 }
         );
-        assertEquals("Максимальная длина описания — 200 символов.", exception.getMessage());
+        assertEquals("Release dare shouldn't be earlier 28.12.1895, or empty values", exception.getMessage());
     }
 
     @Test
-    public void shouldReturnDescriptionSize() throws ValidationException {
-        String description = "";
-        for (int i = 0; i < 20; i++) {
-            description = description + "tenCharTen";
-        }
-        Film film = new Film("QWEDSAsda", description,
-                LocalDate.parse("1999-12-28"), 12);
-        validator.postFilm(film);
-        assertEquals(200, film.getDescription().length());
-    }
-
-    @Test
-    public void shouldReturnDataException() {
-        Film film = new Film("QWEDSAsda", "description",
-                LocalDate.parse("1895-12-27"), 12);
+    public void shouldReturnIdNotValid() throws ValidationException {
+        Film film = new Film(2, "QWEDSAsda", "asdas",
+                LocalDate.parse("1999-12-28"), 12, 5);
         final Exception exception = assertThrows(
                 ValidationException.class,
                 () -> {
-                    validator.postFilm(film);
+                    validator.putFilm(film);
                 }
         );
-        assertEquals("Дата релиза — не раньше 28 декабря 1895 года.", exception.getMessage());
-    }
-
-    @Test
-    public void shouldReturnDurationException() {
-        Film film = new Film("QWEDSAsda", "description",
-                LocalDate.parse("1895-12-29"), 0);
-        final Exception exception = assertThrows(
-                ValidationException.class,
-                () -> {
-                    validator.postFilm(film);
-                }
-        );
-        assertEquals("Продолжительность фильма должна быть положительной.", exception.getMessage());
+        assertEquals("Id not valid", exception.getMessage());
     }
 }
