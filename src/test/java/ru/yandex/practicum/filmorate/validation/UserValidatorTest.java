@@ -1,31 +1,33 @@
 package ru.yandex.practicum.filmorate.validation;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.validators.UserValidator;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import java.time.LocalDate;
+import java.util.HashSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class UserValidatorTest {
-    private static UserValidator validator = new UserValidator();
+    private static InMemoryUserStorage validator = new InMemoryUserStorage();
 
     @Test
     public void shouldReturnLoginException() throws ValidationException {
-        User user = new User(1, "notEmail@mail.com", "sxpailx", "", LocalDate.parse("2022-05-05"));
+        User user = new User(1, "notEmail@mail.com", "sxpailx", "", LocalDate.parse("2022-05-05"), new HashSet<>());
         validator.postUser(user);
         assertEquals("sxpailx", validator.getUsers().get(0).getName());
     }
 
     @Test
     public void shouldReturnException() {
-        User user = new User(2, "notEmail@mail.com", "sxpailx", "name", LocalDate.parse("2022-05-05"));
+        User user = new User( 2, "notEmail@mail.com", "sxpailx", "name", LocalDate.parse("2022-05-05"), new HashSet<>());
         final Exception exception = assertThrows(
-                ValidationException.class,
+                IncorrectValuesException.class,
                 () -> {
                     validator.putUser(user);
                 }
         );
-        assertEquals("Id not valid", exception.getMessage());
+        assertEquals("Id not found", exception.getMessage());
     }
 }

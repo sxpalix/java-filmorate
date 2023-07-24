@@ -1,34 +1,63 @@
 package ru.yandex.practicum.filmorate.controllers;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.validators.FilmValidator;
-
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final FilmValidator films = new FilmValidator();
+    private final FilmStorage filmStorage;
+    private final FilmService filmService;
+
+    @Autowired
+    public FilmController(FilmStorage filmStorage, FilmService filmService) {
+        this.filmStorage = filmStorage;
+        this.filmService = filmService;
+    }
 
     @GetMapping
     public List<Film> getFilms() {
         log.info("GET Request");
-        return films.getFilms();
+        return filmStorage.getFilms();
     }
 
     @PostMapping
     public Film postFilm(@Valid @RequestBody Film film) throws ValidationException {
         log.info("POST Request");
-        return films.postFilm(film);
+        return filmStorage.postFilm(film);
     }
 
     @PutMapping
-    public Film putFilm(@Valid @RequestBody Film film) throws ValidationException {
+    public Film putFilm(@Valid @RequestBody Film film) throws ValidationException, IncorrectValuesException {
         log.info("PUT Request");
-        return films.putFilm(film);
+        return filmStorage.putFilm(film);
+    }
+
+   @PutMapping(path = "/{id}/like/{userId}")
+   public void likeTheMovie(@PathVariable int id, @PathVariable int userId) throws IncorrectValuesException {
+       filmService.likeTheMovie(id, userId);
+   }
+
+    @DeleteMapping(path ="/{id}/like/{userId}")
+    public void unlinkTheMovie(@PathVariable int id, @PathVariable int userId) throws IncorrectValuesException {
+       filmService.unlikeTheMovie(id, userId);
+    }
+
+    @GetMapping(path ="/popular")
+    public List<Film> mostPopularFilm(@RequestParam(required = false) Integer count) {
+       return filmService.mostPopularFilm(count);
+    }
+
+    @GetMapping("/{id}")
+    public Film getFilm(@PathVariable int id) throws IncorrectValuesException {
+        return filmStorage.getFilm(id);
     }
 }

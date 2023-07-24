@@ -1,18 +1,21 @@
 package ru.yandex.practicum.filmorate.validation;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.validators.FilmValidator;
+import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
 import java.time.LocalDate;
+import java.util.HashSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class FilmValidatorTest {
-    private static FilmValidator validator = new FilmValidator();
+public class InMemoryFilmStorageTest {
+    private static InMemoryFilmStorage validator = new InMemoryFilmStorage();
 
     @Test
     public void shouldReturnException() {
-        Film film = new Film();
+        Film film = new Film(0, "QWEDSAsda", "asdas",
+                LocalDate.parse("1883-12-28"), 12, 5, new HashSet<>());
         final Exception exception = assertThrows(
                 ValidationException.class,
         () -> {
@@ -24,8 +27,8 @@ public class FilmValidatorTest {
 
     @Test
     public void shouldReturnTimeException() {
-        Film film = new Film(1, "QWEDSAsda", "asdas",
-                LocalDate.parse("1883-12-28"), 12, 5);
+        Film film = new Film(0, "QWEDSAsda", "asdas",
+                LocalDate.parse("1883-12-28"), 12, 5, new HashSet<>());
         final Exception exception = assertThrows(
                 ValidationException.class,
                 () -> {
@@ -36,11 +39,11 @@ public class FilmValidatorTest {
     }
 
     @Test
-    public void shouldReturnIdNotValid() throws ValidationException {
-        Film film = new Film(2, "QWEDSAsda", "asdas",
-                LocalDate.parse("1999-12-28"), 12, 5);
+    public void shouldReturnIdNotValid() {
+        Film film = new Film(0, "QWEDSAsda", "asdas",
+                LocalDate.parse("1999-12-28"), 12, 5, new HashSet<>());
         final Exception exception = assertThrows(
-                ValidationException.class,
+                IncorrectValuesException.class,
                 () -> {
                     validator.putFilm(film);
                 }

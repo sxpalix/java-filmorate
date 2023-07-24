@@ -2,13 +2,17 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
-@NoArgsConstructor
+@RequiredArgsConstructor
 @AllArgsConstructor
 public class Film {
     private int id;
@@ -20,4 +24,5 @@ public class Film {
     @Min(value = 0, message = "Duration should be more then 0")
     private int duration;
     private int rate;
+    private Set<Integer> usersLikes = new HashSet<>();
 }
