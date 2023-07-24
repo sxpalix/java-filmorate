@@ -21,7 +21,7 @@ public class UserValidatorTest {
 
     @Test
     public void shouldReturnException() {
-        User user = new User( 2, "notEmail@mail.com", "sxpailx", "name", LocalDate.parse("2022-05-05"), new HashSet<>());
+        User user = new User(2, "notEmail@mail.com", "sxpailx", "name", LocalDate.parse("2022-05-05"), new HashSet<>());
         final Exception exception = assertThrows(
                 IncorrectValuesException.class,
                 () -> {
