@@ -19,6 +19,7 @@ public class InMemoryUserStorage implements UserStorage {
             user.setName(user.getLogin());
         }
     }
+
     @Override
     public List<User> getUsers() {
         return new ArrayList<>(users.values());
