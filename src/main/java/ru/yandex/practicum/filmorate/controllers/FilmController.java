@@ -7,7 +7,7 @@ import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import java.util.List;
 
 @Slf4j
@@ -46,12 +46,12 @@ public class FilmController {
        filmService.likeTheMovie(id, userId);
    }
 
-    @DeleteMapping(path ="/{id}/like/{userId}")
+    @DeleteMapping(path = "/{id}/like/{userId}")
     public void unlinkTheMovie(@PathVariable int id, @PathVariable int userId) throws IncorrectValuesException {
        filmService.unlikeTheMovie(id, userId);
     }
 
-    @GetMapping(path ="/popular")
+    @GetMapping(path = "/popular")
     public List<Film> mostPopularFilm(@RequestParam(required = false) Integer count) {
        return filmService.mostPopularFilm(count);
     }
