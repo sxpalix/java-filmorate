@@ -6,7 +6,10 @@ import java.util.List;
 
 public interface UserStorage {
     List<User> getUsers();
+
     User postUser(User user);
+
     User putUser(User user) throws ValidationException, IncorrectValuesException;
+
     User getUserById(int id) throws IncorrectValuesException;
 }

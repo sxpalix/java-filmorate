@@ -6,7 +6,10 @@ import java.util.List;
 
 public interface FilmStorage {
     Film putFilm(Film film) throws ValidationException, IncorrectValuesException;
+
     List<Film> getFilms();
+
     Film postFilm(Film film) throws ValidationException;
+
     Film getFilm(int id) throws IncorrectValuesException;
 }
