@@ -17,6 +17,7 @@ public class Film {
     @NotBlank(message = "Name shouldn't be empty")
     private String name;
     @Size(max = 200, message = "Descriptions should be less then 200")
+    @NotBlank
     private String description;
     private LocalDate releaseDate;
     @Min(value = 0, message = "Duration should be more then 0")
