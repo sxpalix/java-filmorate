@@ -3,7 +3,7 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import java.time.LocalDate;
 import java.util.HashSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,8 +15,8 @@ public class UserValidatorTest {
     @Test
     public void shouldReturnLoginException() throws ValidationException {
         User user = new User(1, "notEmail@mail.com", "sxpailx", "", LocalDate.parse("2022-05-05"), new HashSet<>());
-        validator.postUser(user);
-        assertEquals("sxpailx", validator.getUsers().get(0).getName());
+        validator.post(user);
+        assertEquals("sxpailx", validator.getAll().get(0).getName());
     }
 
     @Test
@@ -25,7 +25,7 @@ public class UserValidatorTest {
         final Exception exception = assertThrows(
                 IncorrectValuesException.class,
                 () -> {
-                    validator.putUser(user);
+                    validator.put(user);
                 }
         );
         assertEquals("Id not found", exception.getMessage());

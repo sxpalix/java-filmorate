@@ -3,7 +3,7 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 import java.time.LocalDate;
 import java.util.HashSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,7 +19,7 @@ public class InMemoryFilmStorageTest {
         final Exception exception = assertThrows(
                 ValidationException.class,
         () -> {
-                    validator.postFilm(film);
+                    validator.post(film);
                 }
         );
         assertEquals("Release dare shouldn't be earlier 28.12.1895, or empty values", exception.getMessage());
@@ -32,7 +32,7 @@ public class InMemoryFilmStorageTest {
         final Exception exception = assertThrows(
                 ValidationException.class,
                 () -> {
-                    validator.postFilm(film);
+                    validator.post(film);
                 }
         );
         assertEquals("Release dare shouldn't be earlier 28.12.1895, or empty values", exception.getMessage());
@@ -45,7 +45,7 @@ public class InMemoryFilmStorageTest {
         final Exception exception = assertThrows(
                 IncorrectValuesException.class,
                 () -> {
-                    validator.putFilm(film);
+                    validator.put(film);
                 }
         );
         assertEquals("Id not valid", exception.getMessage());

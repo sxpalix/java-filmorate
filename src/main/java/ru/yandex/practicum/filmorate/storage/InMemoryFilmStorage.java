@@ -1,15 +1,16 @@
-package ru.yandex.practicum.filmorate.storage.film;
+package ru.yandex.practicum.filmorate.storage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+
 import java.time.LocalDate;
 import java.util.*;
 
 @Slf4j
 @Component
-public class InMemoryFilmStorage implements FilmStorage {
+public class InMemoryFilmStorage implements Storage<Film> {
     private final Map<Integer, Film> films = new HashMap<>();
     private int id = 1;
 
@@ -21,12 +22,12 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getFilms() {
+    public List<Film> getAll() {
         return new ArrayList<>(films.values());
     }
 
     @Override
-    public Film postFilm(Film film) throws ValidationException {
+    public Film post(Film film) throws ValidationException {
         validations(film);
         film.setId(id++);
         films.put(film.getId(), film);
@@ -35,7 +36,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film putFilm(Film film) throws IncorrectValuesException, ValidationException {
+    public Film put(Film film) throws IncorrectValuesException, ValidationException {
         validations(film);
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
@@ -48,7 +49,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilm(int id) throws IncorrectValuesException {
+    public Film get(int id) throws IncorrectValuesException {
         if (!films.containsKey(id)) {
             throw new IncorrectValuesException("Incorrect film id");
         }

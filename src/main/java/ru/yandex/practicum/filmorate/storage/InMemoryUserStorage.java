@@ -1,8 +1,9 @@
-package ru.yandex.practicum.filmorate.storage.user;
+package ru.yandex.practicum.filmorate.storage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.model.User;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class InMemoryUserStorage implements UserStorage {
+public class InMemoryUserStorage implements Storage<User> {
     private final Map<Integer, User> users = new HashMap<>();
     private int id = 1;
 
@@ -21,12 +22,12 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public List<User> getUsers() {
+    public List<User> getAll() {
         return new ArrayList<>(users.values());
     }
 
     @Override
-    public User postUser(User user) {
+    public User post(User user) {
         validations(user);
         user.setId(id++);
         users.put(user.getId(), user);
@@ -35,7 +36,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User putUser(User user) throws IncorrectValuesException {
+    public User put(User user) throws IncorrectValuesException {
         validations(user);
         if (users.containsKey(user.getId())) {
             users.put(user.getId(), user);
@@ -48,7 +49,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User getUserById(int id) throws IncorrectValuesException {
+    public User get(int id) throws IncorrectValuesException {
         if (!users.containsKey(id) || id < 0) {
             throw new IncorrectValuesException("User not found");
         }

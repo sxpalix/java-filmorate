@@ -4,23 +4,24 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.Storage;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class InMemoryFilmService implements FilmService {
-    private final FilmStorage storage;
+    private final Storage<Film> storage;
     private final UserService userService;
 
-    private InMemoryFilmService(FilmStorage storage, UserService userService) {
+    private InMemoryFilmService(Storage<Film> storage, UserService userService) {
         this.storage = storage;
         this.userService = userService;
     }
 
     private void existenceCheckFilm(int id) throws IncorrectValuesException {
-        if (storage.getFilm(id) == null) {
+        if (storage.get(id) == null) {
             log.error("Film with {} isn't added.", id);
             throw new IncorrectValuesException(String.format("Film with %s isn't added.", id));
         }
@@ -36,7 +37,7 @@ public class InMemoryFilmService implements FilmService {
     private Set<Integer> filmsLikes(int id) {
         try {
             existenceCheckFilm(id);
-            return storage.getFilm(id).getUsersLikes();
+            return storage.get(id).getUsersLikes();
         } catch (IncorrectValuesException exception) {
             log.error("User with {} id doesn't exist", id);
             return new HashSet<>();
@@ -60,7 +61,7 @@ public class InMemoryFilmService implements FilmService {
     @Override
     public List<Film> mostPopularFilm(Integer count) {
         int limit = Optional.ofNullable(count).orElse(10);
-        return storage.getFilms().stream()
+        return storage.getAll().stream()
                 .sorted((o1, o2) -> {
                     if (o1.getUsersLikes().size() > o2.getUsersLikes().size()) {
                         return -1;
@@ -74,21 +75,21 @@ public class InMemoryFilmService implements FilmService {
 
     @Override
     public Film putFilm(Film film) throws ValidationException, IncorrectValuesException {
-        return storage.putFilm(film);
+        return storage.put(film);
     }
 
     @Override
     public List<Film> getFilms() {
-        return storage.getFilms();
+        return storage.getAll();
     }
 
     @Override
     public Film postFilm(Film film) throws ValidationException {
-        return storage.postFilm(film);
+        return storage.post(film);
     }
 
     @Override
     public Film getFilm(int id) throws IncorrectValuesException {
-        return storage.getFilm(id);
+        return storage.get(id);
     }
 }

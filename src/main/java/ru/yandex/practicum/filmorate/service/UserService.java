@@ -16,7 +16,7 @@ public interface UserService {
 
     List<User> getUsers();
 
-    User postUser(User user);
+    User postUser(User user) throws ValidationException;
 
     User putUser(User user) throws ValidationException, IncorrectValuesException;
 
