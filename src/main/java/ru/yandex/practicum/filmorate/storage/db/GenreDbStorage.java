@@ -28,7 +28,7 @@ public class GenreDbStorage {
                 .findAny()
                 .orElse(null);
         if (genre == null) {
-            throw new IncorrectValuesException("Not found");
+            throw new IncorrectValuesException("Not found exception");
         }
         return genre;
     }
