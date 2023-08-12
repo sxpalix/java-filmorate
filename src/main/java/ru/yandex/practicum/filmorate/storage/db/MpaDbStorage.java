@@ -10,9 +10,10 @@ import java.util.List;
 @Component("MpaDbStorage")
 public class MpaDbStorage {
     JdbcTemplate template;
+
     @Autowired
     public MpaDbStorage(JdbcTemplate template) {
-        this.template =template;
+        this.template = template;
     }
 
     public List<Mpa> getAll() {
