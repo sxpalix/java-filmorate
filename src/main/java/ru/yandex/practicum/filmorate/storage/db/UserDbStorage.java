@@ -12,9 +12,10 @@ import java.util.List;
 @Component("UserDbStorage")
 public class UserDbStorage implements Storage<User> {
     JdbcTemplate template;
+
     @Autowired
     public UserDbStorage(JdbcTemplate template) {
-        this.template =template;
+        this.template = template;
     }
 
     @Override
