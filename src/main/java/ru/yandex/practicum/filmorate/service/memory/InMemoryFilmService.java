@@ -1,4 +1,3 @@
-
 package ru.yandex.practicum.filmorate.service.memory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,7 +19,8 @@ public class InMemoryFilmService implements FilmService {
     private final Storage<Film> storage;
     private final UserService userService;
 
-    private InMemoryFilmService(@Qualifier("FilmDbStorage") Storage<Film> storage, @Qualifier("DbUserService") UserService userService) {
+    private InMemoryFilmService(@Qualifier("FilmDbStorage") Storage<Film> storage,
+                                @Qualifier("DbUserService") UserService userService) {
         this.storage = storage;
         this.userService = userService;
     }
