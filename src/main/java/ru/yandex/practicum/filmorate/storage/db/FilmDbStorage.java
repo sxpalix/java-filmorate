@@ -20,10 +20,11 @@ public class FilmDbStorage implements Storage<Film> {
     MpaDbStorage mpaDbStorage;
     Valid<Film> valid;
     FilmRowMapper mapper;
+
     @Autowired
-    public FilmDbStorage(JdbcTemplate template, @Qualifier("GenreDbStorage") GenreDbStorage GenreDbStorage,
+    public FilmDbStorage(JdbcTemplate template, GenreDbStorage GenreDbStorage,
                          MpaDbStorage mpaDbStorage, Valid<Film> valid, FilmRowMapper mapper) {
-        this.template =template;
+        this.template = template;
         this.GenreDbStorage = GenreDbStorage;
         this.mpaDbStorage = mpaDbStorage;
         this.valid = valid;
