@@ -1,5 +1,4 @@
 package ru.yandex.practicum.filmorate.storage.validation;
-
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 

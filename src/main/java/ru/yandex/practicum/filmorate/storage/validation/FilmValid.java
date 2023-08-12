@@ -1,10 +1,8 @@
 package ru.yandex.practicum.filmorate.storage.validation;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-
 import java.time.LocalDate;
 
 @Slf4j
