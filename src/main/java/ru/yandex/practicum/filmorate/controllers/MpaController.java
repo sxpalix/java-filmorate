@@ -31,7 +31,7 @@ public class MpaController {
 
     @GetMapping("/{id}")
     public Mpa get(@PathVariable int id) throws IncorrectValuesException {
-        log.info("GET mpa by id");
+        log.info("GET mpa by ids");
         return service.get(id);
     }
 }
