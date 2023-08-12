@@ -1,25 +1,19 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.memory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.Storage;
 
 import java.time.LocalDate;
 import java.util.*;
 
 @Slf4j
-@Component
+@Component("InMemoryFilmStorage")
 public class InMemoryFilmStorage implements Storage<Film> {
     private final Map<Integer, Film> films = new HashMap<>();
     private int id = 1;
-
-    public void validations(Film film) throws ValidationException {
-        if (film.getReleaseDate() == null || film.getReleaseDate().isBefore(LocalDate.parse("1895-12-28"))) {
-            log.error("Release dare shouldn't be earlier 28.12.1895, or empty values");
-            throw new ValidationException("Release dare shouldn't be earlier 28.12.1895, or empty values");
-        }
-    }
 
     @Override
     public List<Film> getAll() {
@@ -28,7 +22,6 @@ public class InMemoryFilmStorage implements Storage<Film> {
 
     @Override
     public Film post(Film film) throws ValidationException {
-        validations(film);
         film.setId(id++);
         films.put(film.getId(), film);
         log.info("Task added successfully");
@@ -37,7 +30,6 @@ public class InMemoryFilmStorage implements Storage<Film> {
 
     @Override
     public Film put(Film film) throws IncorrectValuesException, ValidationException {
-        validations(film);
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
             log.info("Update was successful");

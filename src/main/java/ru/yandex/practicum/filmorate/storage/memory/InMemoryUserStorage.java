@@ -1,8 +1,11 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.memory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.Storage;
+import ru.yandex.practicum.filmorate.storage.validation.UserValid;
+import ru.yandex.practicum.filmorate.storage.validation.Valid;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,16 +13,10 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Component
+@Component("InMemoryUserStorage")
 public class InMemoryUserStorage implements Storage<User> {
     private final Map<Integer, User> users = new HashMap<>();
     private int id = 1;
-
-    private void validations(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-    }
 
     @Override
     public List<User> getAll() {
@@ -28,7 +25,6 @@ public class InMemoryUserStorage implements Storage<User> {
 
     @Override
     public User post(User user) {
-        validations(user);
         user.setId(id++);
         users.put(user.getId(), user);
         log.info("User added successfully");
@@ -37,7 +33,6 @@ public class InMemoryUserStorage implements Storage<User> {
 
     @Override
     public User put(User user) throws IncorrectValuesException {
-        validations(user);
         if (users.containsKey(user.getId())) {
             users.put(user.getId(), user);
             log.info("Successful Update");

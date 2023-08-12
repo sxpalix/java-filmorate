@@ -8,7 +8,7 @@ public interface Storage<T> {
 
     List<T> getAll();
 
-    T post(T t) throws ValidationException;
+    T post(T t) throws ValidationException, IncorrectValuesException;
 
     T get(int id) throws IncorrectValuesException;
 }

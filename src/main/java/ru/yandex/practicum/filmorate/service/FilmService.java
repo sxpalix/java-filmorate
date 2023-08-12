@@ -16,7 +16,7 @@ public interface FilmService {
 
     List<Film> getFilms();
 
-    Film postFilm(Film film) throws ValidationException;
+    Film postFilm(Film film) throws ValidationException, IncorrectValuesException;
 
     Film getFilm(int id) throws IncorrectValuesException;
 }

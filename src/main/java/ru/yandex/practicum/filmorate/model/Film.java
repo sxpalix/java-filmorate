@@ -2,12 +2,10 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+
+import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @RequiredArgsConstructor
@@ -22,6 +20,9 @@ public class Film {
     private LocalDate releaseDate;
     @Min(value = 0, message = "Duration should be more then 0")
     private int duration;
-    private int rate;
+    private double rating;
+    @NotNull
+    private Mpa mpa;
+    private List<Genre> genres = new ArrayList<>();
     private Set<Integer> usersLikes = new HashSet<>();
 }

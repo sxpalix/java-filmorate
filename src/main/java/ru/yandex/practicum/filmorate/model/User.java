@@ -22,4 +22,5 @@ public class User {
     @PastOrPresent(message = "Birthday should be earlier")
     private LocalDate birthday;
     private Set<Integer> friendsList = new HashSet<>();
+
 }

@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controllers;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
@@ -16,7 +17,7 @@ public class FilmController {
     private final FilmService filmService;
 
     @Autowired
-    public FilmController(FilmService filmService) {
+    public FilmController(@Qualifier("DbFilmService") FilmService filmService) {
         this.filmService = filmService;
     }
 
@@ -27,7 +28,7 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film postFilm(@Valid @RequestBody Film film) throws ValidationException {
+    public Film postFilm(@Valid @RequestBody Film film) throws ValidationException, IncorrectValuesException {
         log.info("POST Request");
         return filmService.postFilm(film);
     }

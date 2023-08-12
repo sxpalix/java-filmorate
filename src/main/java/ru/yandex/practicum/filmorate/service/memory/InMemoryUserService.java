@@ -1,20 +1,24 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.service.memory;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.Storage;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Service
+@Service("InMemoryUserService")
 public class InMemoryUserService implements UserService {
     private final Storage<User> storage;
 
-    public InMemoryUserService(Storage<User> storage) {
+    public InMemoryUserService(@Qualifier("UserDbStorage") Storage<User> storage) {
         this.storage = storage;
     }
 
@@ -77,7 +81,7 @@ public class InMemoryUserService implements UserService {
     }
 
     @Override
-    public User postUser(User user) throws ValidationException {
+    public User postUser(User user) throws ValidationException, IncorrectValuesException {
         return storage.post(user);
     }
 
