@@ -16,5 +16,10 @@ INSERT INTO MPA(id, name) VALUES (default, 'PG');
 INSERT INTO MPA(id, name) VALUES (default, 'PG-13');
 INSERT INTO MPA(id, name) VALUES (default, 'R');
 INSERT INTO MPA(id, name) VALUES (default, 'NC-17');
+INSERT INTO MPA(id, name) VALUES (default, 'G');
+INSERT INTO MPA(id, name) VALUES (default, 'PG');
+INSERT INTO MPA(id, name) VALUES (default, 'PG-13');
+INSERT INTO MPA(id, name) VALUES (default, 'R');
+INSERT INTO MPA(id, name) VALUES (default, 'NC-17');
 
 
