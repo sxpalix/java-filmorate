@@ -15,7 +15,7 @@ import java.util.List;
 public class DbUserService implements UserService {
     Storage<User> storage;
     JdbcTemplate template;
-    
+
     public DbUserService(@Qualifier("UserDbStorage") Storage<User> storage, JdbcTemplate template) {
         this.storage = storage;
         this.template = template;
