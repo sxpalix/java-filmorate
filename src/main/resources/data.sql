@@ -18,7 +18,3 @@ INSERT INTO MPA(id, name) VALUES (default, 'R');
 INSERT INTO MPA(id, name) VALUES (default, 'NC-17');
 
 
-[
-│ {"id":6,"name":"G"},{"id":7,"name":"PG"},{"id":8,"na
-  │ me":"PG-13"},{"id":9,"name":"R"},{"id":10,"name":"NC-1
-  │ 7"}]
