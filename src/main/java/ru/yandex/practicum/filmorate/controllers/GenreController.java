@@ -16,6 +16,7 @@ import java.util.List;
 @RequestMapping("/genres")
 public class GenreController {
     private final GenreMpaService<Genre> service;
+
     @Autowired
     public GenreController(@Qualifier("DbGenreService") GenreMpaService<Genre> service) {
         this.service = service;
