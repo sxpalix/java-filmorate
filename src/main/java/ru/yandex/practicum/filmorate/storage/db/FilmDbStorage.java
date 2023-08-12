@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.db;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -16,16 +15,16 @@ import java.util.List;
 @Component("FilmDbStorage")
 public class FilmDbStorage implements Storage<Film> {
     JdbcTemplate template;
-    GenreDbStorage GenreDbStorage;
+    GenreDbStorage genreDbStorage;
     MpaDbStorage mpaDbStorage;
     Valid<Film> valid;
     FilmRowMapper mapper;
 
     @Autowired
-    public FilmDbStorage(JdbcTemplate template, GenreDbStorage GenreDbStorage,
+    public FilmDbStorage(JdbcTemplate template, GenreDbStorage genreDbStorage,
                          MpaDbStorage mpaDbStorage, Valid<Film> valid, FilmRowMapper mapper) {
         this.template = template;
-        this.GenreDbStorage = GenreDbStorage;
+        this.genreDbStorage = genreDbStorage;
         this.mpaDbStorage = mpaDbStorage;
         this.valid = valid;
         this.mapper = mapper;
