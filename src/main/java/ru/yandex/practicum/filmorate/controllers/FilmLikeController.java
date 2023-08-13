@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class FilmLikeController {
     FilmLikeService service;
+
     @PutMapping(path = "/{id}/like/{userId}")
     public void likeTheMovie(@PathVariable int id, @PathVariable int userId) throws IncorrectValuesException {
         log.info("PUT Request. Like the movie");
