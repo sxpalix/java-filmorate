@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.service;
+package ru.yandex.practicum.filmorate.service.mpaGenre;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import java.util.List;
 

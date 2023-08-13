@@ -1,9 +1,9 @@
-package ru.yandex.practicum.filmorate.service.dbService;
+package ru.yandex.practicum.filmorate.service.mpaGenre.db;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.service.GenreMpaService;
+import ru.yandex.practicum.filmorate.service.mpaGenre.GenreMpaService;
 import ru.yandex.practicum.filmorate.storage.db.MpaDbStorage;
 import java.util.List;
 

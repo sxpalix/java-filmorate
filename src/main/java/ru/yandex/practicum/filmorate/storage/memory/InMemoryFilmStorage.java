@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.memory;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -9,7 +8,6 @@ import ru.yandex.practicum.filmorate.storage.Storage;
 import java.util.*;
 
 @Slf4j
-@Component("InMemoryFilmStorage")
 public class InMemoryFilmStorage implements Storage<Film> {
     private final Map<Integer, Film> films = new HashMap<>();
     private int id = 1;

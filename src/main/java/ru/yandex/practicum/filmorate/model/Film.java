@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.*;
@@ -23,6 +22,5 @@ public class Film {
     private double rating;
     @NotNull
     private Mpa mpa;
-    private List<Genre> genres = new ArrayList<>();
-    private Set<Integer> usersLikes = new HashSet<>();
+    private Set<Genre> genres = new LinkedHashSet<>();
 }

@@ -1,5 +1,4 @@
 package ru.yandex.practicum.filmorate.mapper;
-
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -10,7 +9,7 @@ import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.db.MpaDbStorage;
-
+import java.util.LinkedHashSet;
 import java.util.List;
 
 @Component
@@ -38,7 +37,7 @@ public class FilmRowMapper {
         } catch (IncorrectValuesException e) {
             throw new RuntimeException(e);
         }
-        film.setGenres(getGenres(film));
+        film.setGenres(new LinkedHashSet<>(getGenres(film)));
         return film;
     };
 

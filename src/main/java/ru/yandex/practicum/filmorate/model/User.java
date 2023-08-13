@@ -4,8 +4,6 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 @RequiredArgsConstructor
@@ -21,6 +19,4 @@ public class User {
     private String name;
     @PastOrPresent(message = "Birthday should be earlier")
     private LocalDate birthday;
-    private Set<Integer> friendsList = new HashSet<>();
-
 }
