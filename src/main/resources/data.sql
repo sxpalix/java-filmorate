@@ -1,12 +1,12 @@
-MERGE INTO GENRE(id, name) VALUES (default, 'Комедия'),
-(default, 'Драма'),
-(default, 'Мультфильм'),
-(default, 'Триллер'),
-(default, 'Документальный'),
-(default, 'Боевик');
-MERGE INTO MPA(id, name) VALUES (default, 'G'),
-(default, 'PG'),
-(default, 'PG-13'),
-(default, 'R'),
-(default, 'NC-17');
+MERGE INTO GENRE(id, name) VALUES (1, 'Комедия'),
+(2, 'Драма'),
+(3, 'Мультфильм'),
+(4, 'Триллер'),
+(5, 'Документальный'),
+(6, 'Боевик');
+MERGE INTO MPA(id, name) VALUES (1, 'G'),
+(2, 'PG'),
+(3, 'PG-13'),
+(4, 'R'),
+(5, 'NC-17');
 
