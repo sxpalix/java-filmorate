@@ -51,8 +51,7 @@ create table IF NOT EXISTS USERS
 (
     ID       INTEGER auto_increment,
     NAME     CHARACTER VARYING(50) not null,
-    EMAIL    CHARACTER VARYING(50) not null
-        unique,
+    EMAIL    CHARACTER VARYING(50) not null,
     BIRTHDAY DATE                  not null,
     LOGIN    CHARACTER VARYING(50) not null,
     constraint USER_PK
@@ -82,3 +81,6 @@ create table IF NOT EXISTS FRIENDSHIP
         foreign key (FRIEND_ID) references USERS
             on delete cascade
 );
+
+create unique index IF not exists EMAIL_UINDEX on USERS(email);
+create unique index IF not exists LOGIN_UINDEX on USERS(login);
