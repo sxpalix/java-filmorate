@@ -44,4 +44,12 @@ public class InMemoryFilmStorage implements Storage<Film> {
         }
         return films.get(id);
     }
+
+    @Override
+    public void delete(Film film) throws IncorrectValuesException {
+        if (!films.containsKey(id)) {
+            throw new IncorrectValuesException("Incorrect film id");
+        }
+        films.remove(film.getId());
+    }
 }

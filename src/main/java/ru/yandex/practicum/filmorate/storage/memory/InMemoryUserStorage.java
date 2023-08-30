@@ -45,4 +45,12 @@ public class InMemoryUserStorage implements Storage<User> {
         }
         return users.get(id);
     }
+
+    @Override
+    public void delete(User user) throws IncorrectValuesException {
+        if (!users.containsKey(id) || id < 0) {
+            throw new IncorrectValuesException("User not found");
+        }
+        users.remove(user.getId());
+    }
 }
