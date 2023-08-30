@@ -39,4 +39,10 @@ public class UserController {
         log.info("GET request. Get user by ID");
         return userService.get(id);
     }
+
+    @DeleteMapping(value = "/{id}")
+    public void deleteUser(@PathVariable int id) throws IncorrectValuesException {
+        log.info("DELETE Request. Delete user by ID");
+        userService.delete(userService.get(id));
+    }
 }

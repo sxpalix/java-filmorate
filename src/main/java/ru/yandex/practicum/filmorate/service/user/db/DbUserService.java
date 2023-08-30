@@ -43,4 +43,9 @@ public class DbUserService implements UserService {
     public User get(int id) throws IncorrectValuesException {
         return storage.get(id);
     }
+
+    @Override
+    public void delete(User user) throws IncorrectValuesException {
+        storage.delete(user);
+    }
 }

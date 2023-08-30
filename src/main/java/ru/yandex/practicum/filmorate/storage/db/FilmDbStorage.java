@@ -1,5 +1,4 @@
 package ru.yandex.practicum.filmorate.storage.db;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -48,13 +47,6 @@ public class FilmDbStorage implements Storage<Film> {
         for (Genre genre: film.getGenres()) {
             template.update(saveFilmGenre, id, genre.getId());
         }
-
-        template.update("DELETE FROM FILM_DIRECTOR WHERE FILM_ID=?", film.getId());
-        String saveFilmDirector = "INSERT INTO FILM_DIRECTOR(FILM_ID, DIRECTOR_ID) VALUES (?, ?)";
-        for (Director director : film.getDirectors()) {
-            template.update(saveFilmDirector, id, director.getId());
-        }
-
         return get(film.getId());
     }
 
@@ -112,6 +104,16 @@ public class FilmDbStorage implements Storage<Film> {
             return film;
         } else {
             throw new IncorrectValuesException("User not found");
+        }
+    }
+
+    @Override
+    public void delete(Film film) throws IncorrectValuesException {
+        if (film == null) {
+            throw new IncorrectValuesException("User not found");
+        } else {
+            String sql = "DELETE FROM FILM WHERE ID = ?";
+            template.update(sql, film.getId());
         }
     }
 
