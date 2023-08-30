@@ -12,5 +12,5 @@ public interface Storage<T> {
 
     T get(int id) throws IncorrectValuesException;
 
-    void delete (T t) throws IncorrectValuesException;
+    void delete(T t) throws IncorrectValuesException;
 }
