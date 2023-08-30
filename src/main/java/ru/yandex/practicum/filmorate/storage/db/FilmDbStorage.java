@@ -47,6 +47,11 @@ public class FilmDbStorage implements Storage<Film> {
         for (Genre genre: film.getGenres()) {
             template.update(saveFilmGenre, id, genre.getId());
         }
+        template.update("DELETE FROM FILM_DIRECTOR WHERE FILM_ID=?", film.getId());
+        String saveFilmDirector = "INSERT INTO FILM_DIRECTOR(FILM_ID, DIRECTOR_ID) VALUES (?, ?)";
+        for (Director director : film.getDirectors()) {
+            template.update(saveFilmDirector, film.getId(), director.getId());
+        }
         return get(film.getId());
     }
 

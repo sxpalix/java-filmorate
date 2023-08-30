@@ -8,13 +8,12 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Director;
-import ru.yandex.practicum.filmorate.storage.Storage;
 
 import java.util.List;
 
 @Slf4j
 @Component("DirectorDbStorage")
-public class DirectorDbStorage implements Storage<Director> {
+public class DirectorDbStorage {
     private final JdbcTemplate template;
 
     @Autowired
@@ -22,7 +21,6 @@ public class DirectorDbStorage implements Storage<Director> {
         this.template = template;
     }
 
-    @Override
     public Director put(Director director) throws ValidationException, IncorrectValuesException {
         validation(director.getName());
         log.info("put DIRECTOR into database");
@@ -31,14 +29,12 @@ public class DirectorDbStorage implements Storage<Director> {
         return get(director.getId());
     }
 
-    @Override
     public List<Director> getAll() {
         log.info("get Director list");
         String sql = "SELECT * FROM DIRECTOR";
         return template.query(sql, new BeanPropertyRowMapper<>(Director.class));
     }
 
-    @Override
     public Director post(Director director) throws ValidationException, IncorrectValuesException {
         validation(director.getName());
         log.info("post DIRECTOR into database");
@@ -47,7 +43,6 @@ public class DirectorDbStorage implements Storage<Director> {
         return getByName(director.getName());
     }
 
-    @Override
     public Director get(int id) throws IncorrectValuesException {
         log.info("get Director by id");
         String sql = "SELECT * FROM DIRECTOR WHERE id = ?";
