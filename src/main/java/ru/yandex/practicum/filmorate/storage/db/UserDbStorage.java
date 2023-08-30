@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.storage.db;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -8,6 +10,9 @@ import ru.yandex.practicum.filmorate.exceprions.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.Storage;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.util.List;
 
 @Slf4j
@@ -38,9 +43,22 @@ public class UserDbStorage implements Storage<User> {
     @Override
     public User post(User user) throws ValidationException, IncorrectValuesException {
         log.info("post user into database");
-        String sql = "INSERT INTO Users(id, name, email, birthday, login) VALUES (DEFAULT, ?, ?, ?, ?);";
-        template.update(sql, user.getName(), user.getEmail(), user.getBirthday(), user.getLogin());
-        return getByEmail(user.getEmail());
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        String sql = "INSERT INTO Users(name, email, birthday, login) VALUES (?, ?, ?, ?);";
+        template.update(connection -> {
+            PreparedStatement stmt = connection.prepareStatement(sql,  new String[]{"id"});
+            stmt.setString(1, user.getName());
+            stmt.setString(2, user.getEmail());
+            stmt.setDate(3, Date.valueOf(user.getBirthday()));
+            stmt.setString(4, user.getLogin());
+
+            return stmt;
+        }, keyHolder);
+        user.setId(keyHolder.getKey().intValue());
+
+        return getById(user.getId());
     }
 
     public User get(int id) throws IncorrectValuesException {
@@ -57,10 +75,10 @@ public class UserDbStorage implements Storage<User> {
         }
     }
 
-    private User getByEmail(String email) {
+    private User getById(int id) {
         log.info("get user from database by id");
-        String sqlByEmail = "SELECT * FROM Users WHERE EMAIL = ?";
-        return template.query(sqlByEmail, new BeanPropertyRowMapper<>(User.class), email)
+        String sqlByEmail = "SELECT * FROM Users WHERE ID = ?";
+        return template.query(sqlByEmail, new BeanPropertyRowMapper<>(User.class), id)
                 .stream()
                 .findAny()
                 .orElse(null);
