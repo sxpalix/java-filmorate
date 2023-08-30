@@ -17,17 +17,18 @@ Template repository for Filmorate project.
 
 - Запрос на создание записи фильма в БД
 ```sql
-INSERT INTO FILMS (FILM_NAME, DESCRIPTION, RELEASE_DATE, DURATION, RATE, MPA_ID) VALUES(?,?,?,?,?,?)
+INSERT INTO FILM(name, description, release_date, duration, mpa_id, rating) VALUES (?, ?, ?, ?, ?, ?)
  ```
 - Запрос на создание записи пользователя в БД
 ```sql
-INSERT INTO USERS (EMAIL, LOGIN, USER_NAME, BIRTHDAY) VALUES(?,?,?,?)
+INSERT INTO Users(name, email, birthday, login) VALUES (?, ?, ?, ?)
  ```
 - Запрос на добавление пользователя в друзья по его ID
 ```sql
-INSERT INTO FRIENDS (USER_ID, FRIEND_ID) VALUES(?,?)
+INSERT INTO FRIENDSHIP(user_id, friend_id) VALUES(?, ?)
  ```
-- Запрос на получение рейтинга фильма по его ID
+- Запрос на обновление пользователя по его идентификатору
 ```sql
-SELECT COUNT(USER_ID) FROM LIKES WHERE FILM_ID=?
+UPDATE USERS SET NAME=?, EMAIL=?, LOGIN=?, BIRTHDAY=? WHERE ID=?
  ```
+

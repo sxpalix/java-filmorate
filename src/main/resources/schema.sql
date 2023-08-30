@@ -5,6 +5,8 @@ DROP TABLE IF EXISTS FILM_GENRES CASCADE;
 DROP TABLE IF EXISTS USERS CASCADE;
 DROP TABLE IF EXISTS FILM_LIKES CASCADE;
 DROP TABLE IF EXISTS FRIENDSHIP CASCADE;
+DROP TABLE IF EXISTS DIRECTOR CASCADE;
+DROP TABLE IF EXISTS FILM_DIRECTOR CASCADE;
 
 create table IF NOT EXISTS GENRE
 (
@@ -82,5 +84,26 @@ create table IF NOT EXISTS FRIENDSHIP
             on delete cascade
 );
 
+create table IF NOT EXISTS DIRECTOR
+(
+    ID   INTEGER auto_increment,
+    NAME CHARACTER VARYING(50) not null,
+    constraint DIRECTOR_PK
+        primary key (ID)
+);
+
+
+create table IF NOT EXISTS FILM_DIRECTOR
+(
+    FILM_ID     INTEGER not null,
+    DIRECTOR_ID INTEGER not null,
+    constraint "DIRECTOR_FILM_fk"
+        foreign key (FILM_ID) references FILM,
+    constraint "DIRECTOR_Film_fk"
+        foreign key (DIRECTOR_ID) references DIRECTOR
+);
+
 create unique index IF not exists EMAIL_UINDEX on USERS(email);
 create unique index IF not exists LOGIN_UINDEX on USERS(login);
+
+
