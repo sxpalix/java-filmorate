@@ -39,4 +39,10 @@ public class FilmController {
         log.info("GET Request. Get film by ID");
         return filmService.get(id);
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteFilm(@PathVariable int id) throws IncorrectValuesException {
+        log.info("DELETE Request. Delete film by ID");
+        filmService.delete(filmService.get(id));
+    }
 }

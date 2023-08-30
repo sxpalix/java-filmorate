@@ -39,4 +39,9 @@ public class DbFilmService implements FilmService {
     public Film get(int id) throws IncorrectValuesException {
         return storage.get(id);
     }
+
+    @Override
+    public void delete(Film film) throws IncorrectValuesException {
+        storage.delete(film);
+    }
 }

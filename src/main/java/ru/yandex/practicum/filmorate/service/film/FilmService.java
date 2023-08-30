@@ -12,4 +12,6 @@ public interface FilmService {
     Film post(Film film) throws ValidationException, IncorrectValuesException;
 
     Film get(int id) throws IncorrectValuesException;
+
+    void delete(Film film) throws IncorrectValuesException;
 }

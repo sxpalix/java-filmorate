@@ -11,4 +11,6 @@ public interface Storage<T> {
     T post(T t) throws ValidationException, IncorrectValuesException;
 
     T get(int id) throws IncorrectValuesException;
+
+    void delete (T t) throws IncorrectValuesException;
 }
