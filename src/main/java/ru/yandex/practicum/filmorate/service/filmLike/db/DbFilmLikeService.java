@@ -48,4 +48,28 @@ public class DbFilmLikeService implements FilmLikeService {
                 "Limit ?);";
         return template.query(sql, mapper.getFilmRawMember(), limit);
     }
+
+    @Override
+    public List<Film> getRecommendations(int id) {
+        log.info("return film recommendations");
+        String sql = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.mpa_id, f.rating\n" +
+                     "FROM film_likes AS fl\n" +
+                     "LEFT JOIN film AS f ON fl.film_id = f.id\n" +
+                     "WHERE user_id =\n" +
+                     "    (SELECT user_id\n" +
+                     "    FROM film_likes\n" +
+                     "    WHERE film_id IN (\n" +
+                     "      SELECT film_id\n" +
+                     "      FROM film_likes\n" +
+                     "      WHERE user_id = ?)\n" +
+                     "      AND user_id != ?\n" +
+                     "    GROUP BY user_id\n" +
+                     "    ORDER BY COUNT(film_id) DESC\n" +
+                     "    LIMIT 1)\n" +
+                     "  AND film_id NOT IN (\n" +
+                     "    SELECT film_id\n" +
+                     "    FROM film_likes\n" +
+                     "    WHERE user_id = ?)";
+        return template.query(sql, mapper.getFilmRawMember(), id, id, id);
+    }
 }
