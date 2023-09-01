@@ -96,12 +96,17 @@ public class ReviewDbTest {
         reviewDbStorage.post(review);
         review.setFilmId(-9999);
 
-        assertThrows(DataIntegrityViolationException.class, () -> reviewDbStorage.put(review));
+        assertDoesNotThrow(() -> reviewDbStorage.put(review));
 
         review.setFilmId(1);
+        assertEquals(review, reviewDbStorage.get(review.getReviewId()));
+
         review.setUserId(9999);
 
-        assertThrows(DataIntegrityViolationException.class, () -> reviewDbStorage.post(review));
+        assertDoesNotThrow(() -> reviewDbStorage.put(review));
+
+        review.setUserId(1);
+        assertEquals(review, reviewDbStorage.get(review.getReviewId()));
     }
 
     @Test
