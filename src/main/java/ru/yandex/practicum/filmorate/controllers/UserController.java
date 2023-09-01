@@ -5,7 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.filmLike.FilmLikeService;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 import java.util.List;
 
@@ -15,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final FilmLikeService filmLikeService;
 
     @GetMapping
     public List<User> getUsers() {
@@ -44,5 +47,11 @@ public class UserController {
     public void deleteUser(@PathVariable int id) throws IncorrectValuesException {
         log.info("DELETE Request. Delete user by ID");
         userService.delete(userService.get(id));
+    }
+
+    @GetMapping("/{id}/recommendations")
+    public List<Film> getRecommendations(@PathVariable int id) {
+        log.info("GET request. Get recommendations by ID");
+        return filmLikeService.getRecommendations(id);
     }
 }
