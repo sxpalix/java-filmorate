@@ -184,6 +184,28 @@ class UserControllerTest {
                 .andReturn();
     }
 
+    @Test
+    public void shouldDeleteUser() throws Exception {
+        createUser();
+
+        this.mockMvc
+                .perform(
+                        delete("/users/1")
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    public void shouldNotSendErrorWhenDeleteUserWithBadId() throws Exception {
+        this.mockMvc
+                .perform(
+                        delete("/users/-9999")
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+
     private void createUser() throws Exception {
         this.mockMvc.perform(
                 post("/users")

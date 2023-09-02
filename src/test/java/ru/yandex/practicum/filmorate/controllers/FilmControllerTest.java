@@ -103,6 +103,28 @@ class FilmControllerTest {
                 .andReturn();
     }
 
+    @Test
+    public void shouldDeleteFilm() throws Exception {
+        createFilm();
+
+        this.mockMvc
+                .perform(
+                        delete("/films/1")
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    public void shouldNotSendErrorWhenDeleteFilmWithBadId() throws Exception {
+        this.mockMvc
+                .perform(
+                        delete("/films/-9999")
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+
     private void createFilm() throws Exception {
         this.mockMvc.perform(
                 post("/films")
