@@ -6,9 +6,14 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.enums.EventType;
+import ru.yandex.practicum.filmorate.model.enums.Operation;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 import ru.yandex.practicum.filmorate.service.userLike.UserLikeService;
+import ru.yandex.practicum.filmorate.storage.db.EventDbStorage;
+
 import java.util.List;
 
 @Slf4j
@@ -17,9 +22,12 @@ public class DbUserLikeService implements UserLikeService {
     private final UserService service;
     private final JdbcTemplate template;
 
-    public DbUserLikeService(@Qualifier("DbUserService") UserService service, JdbcTemplate template) {
+    private final EventDbStorage eventDbStorage;
+
+    public DbUserLikeService(@Qualifier("DbUserService") UserService service, JdbcTemplate template, EventDbStorage eventDbStorage) {
         this.service = service;
         this.template = template;
+        this.eventDbStorage = eventDbStorage;
     }
 
     @Override
@@ -29,6 +37,14 @@ public class DbUserLikeService implements UserLikeService {
         service.get(friendsId);
         String sql = "INSERT INTO FRIENDSHIP(user_id, friend_id) VALUES(?, ?)";
         template.update(sql, id, friendsId);
+
+        Event event = new Event();
+        event.setTimestamp(System.currentTimeMillis());
+        event.setUserId(id);
+        event.setEventType(EventType.FRIEND);
+        event.setOperation(Operation.ADD);
+        event.setEntityId(friendsId);
+        eventDbStorage.add(event);
     }
 
     @Override
@@ -36,6 +52,14 @@ public class DbUserLikeService implements UserLikeService {
         log.info("delete user with {} id to user with {} id as friends", id, friendsId);
         String sql = "DELETE FROM FRIENDSHIP WHERE user_id = ? AND friend_id = ?";
         template.update(sql, id, friendsId);
+
+        Event event = new Event();
+        event.setTimestamp(System.currentTimeMillis());
+        event.setUserId(id);
+        event.setEventType(EventType.FRIEND);
+        event.setOperation(Operation.REMOVE);
+        event.setEntityId(friendsId);
+        eventDbStorage.add(event);
     }
 
     @Override

@@ -5,10 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.model.enums.EventType;
+import ru.yandex.practicum.filmorate.model.enums.Operation;
 import ru.yandex.practicum.filmorate.service.film.db.DbFilmService;
 import ru.yandex.practicum.filmorate.service.review.ReviewService;
 import ru.yandex.practicum.filmorate.service.user.db.DbUserService;
+import ru.yandex.practicum.filmorate.storage.db.EventDbStorage;
 import ru.yandex.practicum.filmorate.storage.db.ReviewDbStorage;
 
 import java.util.Comparator;
@@ -21,12 +25,14 @@ public class DbReviewService implements ReviewService {
     private final ReviewDbStorage reviewStorage;
     private final DbFilmService filmService;
     private final DbUserService userService;
+    private final EventDbStorage eventDbStorage;
 
     @Autowired
-    public DbReviewService(ReviewDbStorage reviewStorage, DbFilmService filmService, DbUserService userService) {
+    public DbReviewService(ReviewDbStorage reviewStorage, DbFilmService filmService, DbUserService userService, EventDbStorage eventDbStorage) {
         this.reviewStorage = reviewStorage;
         this.filmService = filmService;
         this.userService = userService;
+        this.eventDbStorage = eventDbStorage;
     }
 
     @Override
@@ -34,7 +40,12 @@ public class DbReviewService implements ReviewService {
         if (get(review.getReviewId()) == null) {
             throw new IncorrectValuesException("Review not found");
         }
-
+        Event event = new Event();
+        event.setTimestamp(System.currentTimeMillis());
+        event.setEventType(EventType.REVIEW);
+        event.setOperation(Operation.UPDATE);
+        event.setEntityId(review.getReviewId());
+        eventDbStorage.add(event);
         return reviewStorage.put(review);
     }
 
@@ -70,11 +81,27 @@ public class DbReviewService implements ReviewService {
     @Override
     public void delete(Review review) throws IncorrectValuesException {
         reviewStorage.delete(review);
+
+        Event event = new Event();
+        event.setTimestamp(System.currentTimeMillis());
+        event.setUserId(review.getUserId());
+        event.setEventType(EventType.LIKE);
+        event.setOperation(Operation.REMOVE);
+        event.setEntityId(review.getReviewId());
+        eventDbStorage.add(event);
     }
 
     @Override
     public void addLike(int reviewId, int userId) throws IncorrectValuesException {
         checkReviewUser(reviewId, userId);
+
+        Event event = new Event();
+        event.setTimestamp(System.currentTimeMillis());
+        event.setUserId(userId);
+        event.setEventType(EventType.LIKE);
+        event.setOperation(Operation.ADD);
+        event.setEntityId(reviewId);
+        eventDbStorage.add(event);
         reviewStorage.addLike(reviewId, userId);
     }
 
@@ -87,6 +114,14 @@ public class DbReviewService implements ReviewService {
     @Override
     public void deleteLike(int reviewId, int userId) throws IncorrectValuesException {
         checkReviewUser(reviewId, userId);
+
+        Event event = new Event();
+        event.setTimestamp(System.currentTimeMillis());
+        event.setUserId(userId);
+        event.setEventType(EventType.LIKE);
+        event.setOperation(Operation.REMOVE);
+        event.setEntityId(reviewId);
+        eventDbStorage.add(event);
         reviewStorage.deleteLike(reviewId, userId);
     }
 

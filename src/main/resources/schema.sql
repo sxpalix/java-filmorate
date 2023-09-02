@@ -154,7 +154,15 @@ CREATE TABLE IF NOT EXISTS DISLIKE_REVIEWS
         FOREIGN KEY (USER_ID) REFERENCES USERS ON DELETE CASCADE
 );
 
+create table IF NOT EXISTS USER_FEED (
+ ID          INTEGER auto_increment,
+ TIMESTAMP   BIGINT,
+ USER_ID     INTEGER,
+ EVENT_TYPE  CHARACTER VARYING(50) not null,
+ OPERATION   CHARACTER VARYING(50) not null,
+ EVENT_ID    INTEGER,
+ ENTITY      INTEGER
+);
+
 create unique index IF not exists EMAIL_UINDEX on USERS(email);
 create unique index IF not exists LOGIN_UINDEX on USERS(login);
-
-
