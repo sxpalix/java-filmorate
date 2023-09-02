@@ -24,5 +24,4 @@ public class FilmSearchController {
 		log.info("GET Request. Search films");
 		return service.searchFilm(query, by);
 	}
-
 }

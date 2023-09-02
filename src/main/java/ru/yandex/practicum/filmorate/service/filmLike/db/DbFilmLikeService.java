@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
 import ru.yandex.practicum.filmorate.service.filmLike.FilmLikeService;
 import ru.yandex.practicum.filmorate.service.user.UserService;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -71,5 +72,18 @@ public class DbFilmLikeService implements FilmLikeService {
                      "    FROM film_likes\n" +
                      "    WHERE user_id = ?)";
         return template.query(sql, mapper.getFilmRawMember(), id, id, id);
+    }
+
+    @Override
+    public List<Film> commonFilms(int userId, int friendId) {
+        log.info(userId + "   " + friendId);
+        String sql = "SELECT * FROM FILM\n" +
+                "INNER JOIN (SELECT FILM_ID, COUNT(USER_ID) AS C FROM FILM_LIKES WHERE USER_ID = ? OR USER_ID = ?\n" +
+                "GROUP BY FILM_ID HAVING C > 1) AS CO ON FILM.ID = CO.FILM_ID\n" +
+                "INNER JOIN (SELECT FILM_ID, COUNT(USER_ID) AS MAX_COUNT FROM FILM_LIKES GROUP BY FILM_ID)\n" +
+                "    AS FL ON FILM.ID=FL.FILM_ID\n" +
+                "GROUP BY ID\n" +
+                "ORDER BY FL.MAX_COUNT DESC;";
+        return template.query(sql, mapper.getFilmRawMember(), userId, friendId);
     }
 }
