@@ -9,7 +9,7 @@ public interface FilmLikeService {
 
     void unlikeTheMovie(int filmId, int userId) throws IncorrectValuesException;
 
-    List<Film> mostPopularFilm(Integer count);
+    List<Film> mostPopularFilm(int count, int genreId, int year);
 
     List<Film> getRecommendations(int id);
 
