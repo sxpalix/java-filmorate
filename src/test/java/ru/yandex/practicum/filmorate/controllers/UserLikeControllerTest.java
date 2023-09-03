@@ -80,6 +80,9 @@ class UserLikeControllerTest {
 
     @Test
     public void shouldSuccessDeleteFriend() throws Exception {
+        this.mockMvc.perform(put("/users/1/friends/2"))
+                .andExpect(status().isOk())
+                .andExpect(handler().methodName("putToFriends"));
         this.mockMvc.perform(put("/users/2/friends/1"))
                 .andExpect(status().isOk())
                 .andExpect(handler().methodName("putToFriends"));
@@ -96,7 +99,7 @@ class UserLikeControllerTest {
         List<User> users = objectMapper.readValue(result.getResponse().getContentAsString(),
                 objectMapper.readerForListOf(User.class).getValueType());
 
-        assertEquals(0, users.size(), String.format("Ожидался 1 друг получен: %s", users.size()));
+        assertEquals(0, users.size(), String.format("Ожидался 0 получен: %s", users.size()));
     }
 
     @Test
