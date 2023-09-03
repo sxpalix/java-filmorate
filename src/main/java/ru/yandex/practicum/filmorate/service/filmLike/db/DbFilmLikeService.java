@@ -9,9 +9,10 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
 import ru.yandex.practicum.filmorate.service.filmLike.FilmLikeService;
 import ru.yandex.practicum.filmorate.service.user.UserService;
-import java.util.List;
-import java.util.Optional;
 
+import java.util.List;
+
+@SuppressWarnings("checkstyle:Regexp")
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -36,17 +37,21 @@ public class DbFilmLikeService implements FilmLikeService {
         template.update(sql, filmId, userId);
     }
 
-    public List<Film> mostPopularFilm(Integer count) {
-        log.info("return most popular film");
-        int limit = Optional.ofNullable(count).orElse(10);
-        String sql = "SELECT id, name, description, release_date, duration, mpa_id, rating FROM (\n" +
-                "SELECT id, name, description, release_date, duration, mpa_id, rating," +
-                " COUNT(user_id) AS likes FROM FILM\n" +
-                "LEFT OUTER JOIN Film_Likes AS fl ON Film.id = fl.FILM_ID\n" +
-                "GROUP BY id\n" +
-                "ORDER BY likes DESC\n" +
-                "Limit ?);";
-        return template.query(sql, mapper.getFilmRawMember(), limit);
+    @Override
+    public List<Film> mostPopularFilm(int count, int genreId, int year) {
+        if (genreId == 0 && year == 1894) {
+            log.info("return most popular film");
+            return getPopular(count);
+        } else if (genreId != 0 && year == 1894) {
+            log.info("return most popular film by genreId");
+            return getPopularByGenreId(count, genreId);
+        } else if (genreId == 0) {
+            log.info("return most popular film by year");
+            return getPopularByYear(count, year);
+        } else {
+            log.info("return most popular film by genreId and year");
+            return getPopularByGenreIdAndYear(count, genreId, year);
+        }
     }
 
     @Override
@@ -71,5 +76,79 @@ public class DbFilmLikeService implements FilmLikeService {
                      "    FROM film_likes\n" +
                      "    WHERE user_id = ?)";
         return template.query(sql, mapper.getFilmRawMember(), id, id, id);
+    }
+
+    private List<Film> getPopular(int count) {
+        String sql = "SELECT f.id, " +
+                            "f.name, " +
+                            "f.description, " +
+                            "f.release_date, " +
+                            "f.duration, " +
+                            "f.mpa_id, " +
+                            "f.rating, " +
+                            "COUNT(fl.film_id) likes " +
+                     "FROM film AS f " +
+                     "LEFT JOIN film_likes AS fl ON f.id = fl.film_id " +
+                     "GROUP BY f.id " +
+                     "ORDER BY likes DESC " +
+                     "LIMIT ?";
+        return template.query(sql, mapper.getFilmRawMember(), count);
+    }
+
+    private List<Film> getPopularByGenreId(int count, int genreId) {
+        String sql = "SELECT f.id, " +
+                            "f.name, " +
+                            "f.description, " +
+                            "f.release_date, " +
+                            "f.duration, " +
+                            "f.mpa_id, " +
+                            "f.rating, " +
+                            "COUNT(fl.film_id) likes " +
+                     "FROM film AS f " +
+                     "RIGHT JOIN film_genres AS fg ON f.id = fg.film_id " +
+                     "LEFT JOIN film_likes AS fl ON f.id = fl.film_id " +
+                     "WHERE fg.genre_id = ?" +
+                     "GROUP BY f.id " +
+                     "ORDER BY likes DESC " +
+                     "LIMIT ?";
+        return template.query(sql, mapper.getFilmRawMember(), genreId, count);
+    }
+
+    private List<Film> getPopularByYear(int count, int year) {
+        String sql = "SELECT f.id, " +
+                            "f.name, " +
+                            "f.description, " +
+                            "f.release_date, " +
+                            "f.duration, " +
+                            "f.mpa_id, " +
+                            "f.rating, " +
+                            "COUNT(fl.film_id) likes " +
+                     "FROM film AS f " +
+                     "LEFT JOIN film_likes AS fl ON f.id = fl.film_id " +
+                     "WHERE EXTRACT(YEAR FROM f.release_date) = ? " +
+                     "GROUP BY f.id " +
+                     "ORDER BY likes DESC " +
+                     "LIMIT ?";
+        return template.query(sql, mapper.getFilmRawMember(), year, count);
+    }
+
+    private List<Film> getPopularByGenreIdAndYear(int count, int genreId, int year) {
+        String sql = "SELECT f.id, " +
+                            "f.name, " +
+                            "f.description, " +
+                            "f.release_date, " +
+                            "f.duration, " +
+                            "f.mpa_id, " +
+                            "f.rating, " +
+                            "COUNT(fl.film_id) likes " +
+                     "FROM film AS f " +
+                     "RIGHT JOIN film_genres AS fg ON f.id = fg.film_id " +
+                     "LEFT JOIN film_likes AS fl ON f.id = fl.film_id " +
+                     "WHERE EXTRACT(YEAR FROM f.release_date) = ?" +
+                     "AND fg.genre_id = ?" +
+                     "GROUP BY f.id " +
+                     "ORDER BY likes DESC " +
+                     "LIMIT ?";
+        return template.query(sql, mapper.getFilmRawMember(), year, genreId, count);
     }
 }
