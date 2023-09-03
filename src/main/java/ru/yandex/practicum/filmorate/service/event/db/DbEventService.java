@@ -21,4 +21,9 @@ public class DbEventService implements EventService {
     public List<Event> getFeed(int id) {
         return storage.getFeed(id);
     }
+
+    @Override
+    public void add(Event event) {
+        storage.add(event);
+    }
 }

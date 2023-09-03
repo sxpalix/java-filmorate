@@ -81,26 +81,18 @@ public class DbReviewService implements ReviewService {
     @Override
     public void delete(Review review) throws IncorrectValuesException {
         reviewStorage.delete(review);
-
-        Event event = new Event();
-        event.setTimestamp(System.currentTimeMillis());
-        event.setUserId(review.getUserId());
-        event.setEventType(EventType.LIKE);
-        event.setOperation(Operation.REMOVE);
-        event.setEntityId(review.getReviewId());
-        eventDbStorage.add(event);
     }
 
     @Override
     public void addLike(int reviewId, int userId) throws IncorrectValuesException {
         checkReviewUser(reviewId, userId);
-
-        Event event = new Event();
-        event.setTimestamp(System.currentTimeMillis());
-        event.setUserId(userId);
-        event.setEventType(EventType.LIKE);
-        event.setOperation(Operation.ADD);
-        event.setEntityId(reviewId);
+        Event event = Event.builder()
+                .timestamp(System.currentTimeMillis())
+                .userId(userId)
+                .eventType(EventType.LIKE)
+                .operation(Operation.ADD)
+                .entityId(reviewId)
+                .build();
         eventDbStorage.add(event);
         reviewStorage.addLike(reviewId, userId);
     }
@@ -114,13 +106,13 @@ public class DbReviewService implements ReviewService {
     @Override
     public void deleteLike(int reviewId, int userId) throws IncorrectValuesException {
         checkReviewUser(reviewId, userId);
-
-        Event event = new Event();
-        event.setTimestamp(System.currentTimeMillis());
-        event.setUserId(userId);
-        event.setEventType(EventType.LIKE);
-        event.setOperation(Operation.REMOVE);
-        event.setEntityId(reviewId);
+        Event event = Event.builder()
+                .timestamp(System.currentTimeMillis())
+                .userId(userId)
+                .eventType(EventType.LIKE)
+                .operation(Operation.REMOVE)
+                .entityId(reviewId)
+                .build();
         eventDbStorage.add(event);
         reviewStorage.deleteLike(reviewId, userId);
     }

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
+import ru.yandex.practicum.filmorate.exceprions.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.FilmRowMapper;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -32,14 +33,14 @@ public class DbFilmLikeService implements FilmLikeService {
         log.info("User with id {} like the movie with {} id", userId, filmId);
         String sql = "INSERT INTO FILM_LIKES(film_id, user_id) VALUES (?, ?);";
         template.update(sql, filmId, userId);
-
-        Event event = new Event();
-        event.setTimestamp(System.currentTimeMillis());
-        event.setUserId(userId);
-        event.setEventType(EventType.LIKE);
-        event.setOperation(Operation.ADD);
-        event.setEntityId(filmId);
-        eventDbStorage.add(event);
+            Event event = Event.builder()
+                    .timestamp(System.currentTimeMillis())
+                    .userId(userId)
+                    .eventType(EventType.LIKE)
+                    .operation(Operation.ADD)
+                    .entityId(filmId)
+                    .build();
+            eventDbStorage.add(event);
     }
 
     public void unlikeTheMovie(int filmId, int userId) throws IncorrectValuesException {
@@ -49,13 +50,14 @@ public class DbFilmLikeService implements FilmLikeService {
         String sql = "DELETE FROM FILM_LIKES WHERE film_Id =? AND user_Id =?";
         template.update(sql, filmId, userId);
 
-        Event event = new Event();
-        event.setTimestamp(System.currentTimeMillis());
-        event.setUserId(userId);
-        event.setEventType(EventType.LIKE);
-        event.setOperation(Operation.REMOVE);
-        event.setEntityId(filmId);
-        eventDbStorage.add(event);
+            Event event = Event.builder()
+                    .timestamp(System.currentTimeMillis())
+                    .userId(userId)
+                    .eventType(EventType.LIKE)
+                    .operation(Operation.REMOVE)
+                    .entityId(filmId)
+                    .build();
+            eventDbStorage.add(event);
     }
 
     public List<Film> mostPopularFilm(Integer count) {

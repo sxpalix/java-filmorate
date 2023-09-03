@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service.userLike.db;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -23,7 +24,7 @@ public class DbUserLikeService implements UserLikeService {
     private final JdbcTemplate template;
 
     private final EventDbStorage eventDbStorage;
-
+@Autowired
     public DbUserLikeService(@Qualifier("DbUserService") UserService service, JdbcTemplate template, EventDbStorage eventDbStorage) {
         this.service = service;
         this.template = template;
@@ -38,12 +39,13 @@ public class DbUserLikeService implements UserLikeService {
         String sql = "INSERT INTO FRIENDSHIP(user_id, friend_id) VALUES(?, ?)";
         template.update(sql, id, friendsId);
 
-        Event event = new Event();
-        event.setTimestamp(System.currentTimeMillis());
-        event.setUserId(id);
-        event.setEventType(EventType.FRIEND);
-        event.setOperation(Operation.ADD);
-        event.setEntityId(friendsId);
+        Event event = Event.builder()
+                .timestamp(System.currentTimeMillis())
+                .userId(id)
+                .eventType(EventType.FRIEND)
+                .operation(Operation.ADD)
+                .entityId(friendsId)
+                .build();
         eventDbStorage.add(event);
     }
 
@@ -53,12 +55,13 @@ public class DbUserLikeService implements UserLikeService {
         String sql = "DELETE FROM FRIENDSHIP WHERE user_id = ? AND friend_id = ?";
         template.update(sql, id, friendsId);
 
-        Event event = new Event();
-        event.setTimestamp(System.currentTimeMillis());
-        event.setUserId(id);
-        event.setEventType(EventType.FRIEND);
-        event.setOperation(Operation.REMOVE);
-        event.setEntityId(friendsId);
+        Event event = Event.builder()
+                .timestamp(System.currentTimeMillis())
+                .userId(id)
+                .eventType(EventType.FRIEND)
+                .operation(Operation.REMOVE)
+                .entityId(friendsId)
+                .build();
         eventDbStorage.add(event);
     }
 
