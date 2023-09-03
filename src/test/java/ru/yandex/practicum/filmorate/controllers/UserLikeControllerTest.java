@@ -70,14 +70,6 @@ class UserLikeControllerTest {
         );
     }
 
-    @BeforeEach
-    public void deleteUser() throws Exception {
-        this.mockMvc.perform(delete("/users/1/friends/2"));
-        this.mockMvc.perform(delete("/users/2/friends/1"));
-        this.mockMvc.perform(delete("/users/1/friends/3"));
-        this.mockMvc.perform(delete("/users/2/friends/3"));
-    }
-
     @Test
     public void shouldSuccessDeleteFriend() throws Exception {
         this.mockMvc.perform(put("/users/1/friends/2"))
