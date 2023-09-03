@@ -70,7 +70,7 @@ class UserLikeControllerTest {
         );
     }
 
-    @AfterEach
+    @BeforeEach
     public void deleteUser() throws Exception {
         this.mockMvc.perform(delete("/users/1/friends/2"));
         this.mockMvc.perform(delete("/users/2/friends/1"));
