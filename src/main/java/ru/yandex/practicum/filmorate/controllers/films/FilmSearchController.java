@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.controllers;
+package ru.yandex.practicum.filmorate.controllers.films;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("/films")
 @AllArgsConstructor
 public class FilmSearchController {
-	FilmSearchService service;
+	private final FilmSearchService service;
 
 	@GetMapping(path = "/search")
 	public List<Film> searchFilm(@RequestParam String query, @RequestParam List<String> by) throws IncorrectValuesException {

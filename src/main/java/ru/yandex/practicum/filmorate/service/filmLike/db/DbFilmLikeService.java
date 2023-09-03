@@ -79,6 +79,7 @@ public class DbFilmLikeService implements FilmLikeService {
     }
 
     private List<Film> getPopular(int count) {
+        log.info("Get popular");
         String sql = "SELECT f.id, " +
                             "f.name, " +
                             "f.description, " +
@@ -96,6 +97,7 @@ public class DbFilmLikeService implements FilmLikeService {
     }
 
     private List<Film> getPopularByGenreId(int count, int genreId) {
+        log.info("Get popular by genre {}", genreId);
         String sql = "SELECT f.id, " +
                             "f.name, " +
                             "f.description, " +
@@ -115,6 +117,7 @@ public class DbFilmLikeService implements FilmLikeService {
     }
 
     private List<Film> getPopularByYear(int count, int year) {
+        log.info("Get popular by year {}", year);
         String sql = "SELECT f.id, " +
                             "f.name, " +
                             "f.description, " +
@@ -133,6 +136,7 @@ public class DbFilmLikeService implements FilmLikeService {
     }
 
     private List<Film> getPopularByGenreIdAndYear(int count, int genreId, int year) {
+        log.info("Get popular by genre {} and year", genreId, year);
         String sql = "SELECT f.id, " +
                             "f.name, " +
                             "f.description, " +
@@ -153,7 +157,7 @@ public class DbFilmLikeService implements FilmLikeService {
     }
 
     public List<Film> commonFilms(int userId, int friendId) {
-        log.info(userId + "   " + friendId);
+        log.info("Get list with common films with {} and {}.", userId, friendId);
         String sql = "SELECT * FROM FILM\n" +
                 "INNER JOIN (SELECT FILM_ID, COUNT(USER_ID) AS C FROM FILM_LIKES WHERE USER_ID = ? OR USER_ID = ?\n" +
                 "GROUP BY FILM_ID HAVING C > 1) AS CO ON FILM.ID = CO.FILM_ID\n" +
