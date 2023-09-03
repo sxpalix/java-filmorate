@@ -19,7 +19,6 @@ import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserLikeControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -68,6 +67,14 @@ class UserLikeControllerTest {
                         .content(objectMapper.writeValueAsString(user3))
                         .contentType(MediaType.APPLICATION_JSON)
         );
+    }
+
+    @BeforeEach
+    public void deleteUser() throws Exception {
+        this.mockMvc.perform(delete("/users/1/friends/2"));
+        this.mockMvc.perform(delete("/users/2/friends/1"));
+        this.mockMvc.perform(delete("/users/1/friends/3"));
+        this.mockMvc.perform(delete("/users/2/friends/3"));
     }
 
     @Test
