@@ -19,28 +19,31 @@ public class DirectorController {
 
     @GetMapping
     public List<Director> getAll() {
-        log.info("GET all genres");
+        log.info("GET all directors");
         return service.getAll();
     }
 
     @GetMapping("/{id}")
     public Director get(@PathVariable int id) throws IncorrectValuesException {
-        log.info("GET genre by id");
+        log.info("GET directors by id");
         return service.get(id);
     }
 
     @PostMapping
     public Director post(@RequestBody Director director) throws ValidationException, IncorrectValuesException {
+        log.info("Post new director");
         return service.post(director);
     }
 
     @PutMapping
     public Director put(@RequestBody Director director) throws ValidationException, IncorrectValuesException {
+        log.info("update director");
         return service.put(director);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable int id) throws ValidationException, IncorrectValuesException {
+        log.info("DELETE director");
         service.delete(id);
     }
 }

@@ -16,6 +16,7 @@ public class SortedDirectorController {
 
     @GetMapping("/{directorId}")
     public List<Film> sortedDirectorsList(@PathVariable int directorId, @RequestParam String sortBy) throws IncorrectValuesException {
+        log.info("Sort directors film by {}", sortBy);
         return service.sortedDirector(directorId, sortBy);
     }
 }

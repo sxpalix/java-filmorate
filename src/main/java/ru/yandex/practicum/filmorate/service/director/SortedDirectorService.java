@@ -36,6 +36,7 @@ public class SortedDirectorService {
             films = template.query(sql, mapper.getFilmRawMember(), id);
         }
         if (films.isEmpty()) {
+            log.error("Make sure the request {} is correct or the director {} is available", sortedBy, id);
             throw new IncorrectValuesException("Make sure the request is correct or the director is available");
         } else {
             return films;

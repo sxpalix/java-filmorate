@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.controllers;
+package ru.yandex.practicum.filmorate.controllers.films;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +13,7 @@ import java.util.List;
 @RequestMapping("/films")
 @AllArgsConstructor
 public class FilmLikeController {
-    FilmLikeService service;
+    private final FilmLikeService service;
 
     @PutMapping(path = "/{id}/like/{userId}")
     public void likeTheMovie(@PathVariable int id, @PathVariable int userId) throws IncorrectValuesException {

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.controllers;
+package ru.yandex.practicum.filmorate.controllers.users;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +12,7 @@ import java.util.List;
 @RequestMapping("/users")
 @AllArgsConstructor
 public class UserLikeController {
-    UserLikeService service;
+    private final UserLikeService service;
 
     @PutMapping("/{id}/friends/{friendId}")
     public void putToFriends(@PathVariable int id, @PathVariable int friendId) throws IncorrectValuesException {
