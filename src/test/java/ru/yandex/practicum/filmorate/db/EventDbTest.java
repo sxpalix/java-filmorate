@@ -83,20 +83,6 @@ public class EventDbTest {
     }
 
     @Test
-    public void testCreateEventLike() {
-        int userId = 1;
-        int filmId = 201;
-
-        Event event = dbEventService.createEventLike(userId, filmId, Operation.ADD);
-
-        assertEquals(System.currentTimeMillis(), event.getTimestamp(), 1000);
-        assertEquals(userId, event.getUserId());
-        assertEquals(EventType.LIKE, event.getEventType());
-        assertEquals(Operation.ADD, event.getOperation());
-        assertEquals(filmId, event.getEntityId());
-    }
-
-    @Test
     public void testCreateEventRemovelike() {
         int userId = 1;
         int filmId = 201;
@@ -116,6 +102,20 @@ public class EventDbTest {
         assertEquals(EventType.LIKE, unlikeEvent.getEventType());
         assertEquals(Operation.REMOVE, unlikeEvent.getOperation());
         assertEquals(filmId, unlikeEvent.getEntityId());
+    }
+
+    @Test
+    public void testCreateEventLike() {
+        int userId = 1;
+        int filmId = 201;
+
+        Event event = dbEventService.createEventLike(userId, filmId, Operation.ADD);
+
+        assertEquals(System.currentTimeMillis(), event.getTimestamp(), 1000);
+        assertEquals(userId, event.getUserId());
+        assertEquals(EventType.LIKE, event.getEventType());
+        assertEquals(Operation.ADD, event.getOperation());
+        assertEquals(filmId, event.getEntityId());
     }
 
     @Test
