@@ -5,14 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
-import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Review;
-import ru.yandex.practicum.filmorate.model.enums.EventType;
 import ru.yandex.practicum.filmorate.model.enums.Operation;
+import ru.yandex.practicum.filmorate.service.event.db.DbEventService;
 import ru.yandex.practicum.filmorate.service.film.db.DbFilmService;
 import ru.yandex.practicum.filmorate.service.review.ReviewService;
 import ru.yandex.practicum.filmorate.service.user.db.DbUserService;
-import ru.yandex.practicum.filmorate.storage.db.EventDbStorage;
 import ru.yandex.practicum.filmorate.storage.db.ReviewDbStorage;
 
 import java.util.Comparator;
@@ -25,14 +23,14 @@ public class DbReviewService implements ReviewService {
     private final ReviewDbStorage reviewStorage;
     private final DbFilmService filmService;
     private final DbUserService userService;
-    private final EventDbStorage eventDbStorage;
+    private final DbEventService dbEventService;
 
     @Autowired
-    public DbReviewService(ReviewDbStorage reviewStorage, DbFilmService filmService, DbUserService userService, EventDbStorage eventDbStorage) {
+    public DbReviewService(ReviewDbStorage reviewStorage, DbFilmService filmService, DbUserService userService, DbEventService dbEventService) {
         this.reviewStorage = reviewStorage;
         this.filmService = filmService;
         this.userService = userService;
-        this.eventDbStorage = eventDbStorage;
+        this.dbEventService = dbEventService;
     }
 
     @Override
@@ -40,13 +38,9 @@ public class DbReviewService implements ReviewService {
         if (get(review.getReviewId()) == null) {
             throw new IncorrectValuesException("Review not found");
         }
-        Event event = new Event();
-        event.setTimestamp(System.currentTimeMillis());
-        event.setEventType(EventType.REVIEW);
-        event.setOperation(Operation.UPDATE);
-        event.setEntityId(review.getReviewId());
-        eventDbStorage.add(event);
-        return reviewStorage.put(review);
+        Review newReview = reviewStorage.put(review);
+        dbEventService.add(dbEventService.createEventReview(newReview, Operation.UPDATE));
+        return newReview;
     }
 
     @Override
@@ -69,8 +63,9 @@ public class DbReviewService implements ReviewService {
         if (filmService.get(review.getFilmId()) == null || userService.get(review.getUserId()) == null) {
             throw new IncorrectValuesException("Film or user not found");
         }
-
-        return reviewStorage.post(review);
+        Review newReview = reviewStorage.post(review);
+        dbEventService.add(dbEventService.createEventReview(newReview, Operation.ADD));
+        return newReview;
     }
 
     @Override
@@ -80,20 +75,13 @@ public class DbReviewService implements ReviewService {
 
     @Override
     public void delete(Review review) throws IncorrectValuesException {
+        dbEventService.add(dbEventService.createEventReview(review, Operation.REMOVE));
         reviewStorage.delete(review);
     }
 
     @Override
     public void addLike(int reviewId, int userId) throws IncorrectValuesException {
         checkReviewUser(reviewId, userId);
-        Event event = Event.builder()
-                .timestamp(System.currentTimeMillis())
-                .userId(userId)
-                .eventType(EventType.LIKE)
-                .operation(Operation.ADD)
-                .entityId(reviewId)
-                .build();
-        eventDbStorage.add(event);
         reviewStorage.addLike(reviewId, userId);
     }
 
@@ -106,14 +94,6 @@ public class DbReviewService implements ReviewService {
     @Override
     public void deleteLike(int reviewId, int userId) throws IncorrectValuesException {
         checkReviewUser(reviewId, userId);
-        Event event = Event.builder()
-                .timestamp(System.currentTimeMillis())
-                .userId(userId)
-                .eventType(EventType.LIKE)
-                .operation(Operation.REMOVE)
-                .entityId(reviewId)
-                .build();
-        eventDbStorage.add(event);
         reviewStorage.deleteLike(reviewId, userId);
     }
 

@@ -63,7 +63,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/feed")
-    public List<Event> getFeed(@PathVariable int id) {
+    public List<Event> getFeed(@PathVariable int id) throws IncorrectValuesException, ValidationException {
         log.info("GET request. Get feed by ID");
         return eventService.getFeed(id);
     }

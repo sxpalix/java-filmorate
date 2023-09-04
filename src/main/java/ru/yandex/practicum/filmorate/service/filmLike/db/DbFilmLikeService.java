@@ -1,19 +1,17 @@
 package ru.yandex.practicum.filmorate.service.filmLike.db;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
-import ru.yandex.practicum.filmorate.exceprions.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.FilmRowMapper;
-import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.enums.EventType;
 import ru.yandex.practicum.filmorate.model.enums.Operation;
+import ru.yandex.practicum.filmorate.service.event.db.DbEventService;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
 import ru.yandex.practicum.filmorate.service.filmLike.FilmLikeService;
 import ru.yandex.practicum.filmorate.service.user.UserService;
-import ru.yandex.practicum.filmorate.storage.db.EventDbStorage;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,21 +24,14 @@ public class DbFilmLikeService implements FilmLikeService {
     private final JdbcTemplate template;
     private final FilmRowMapper mapper;
     private final UserService userService;
-    private final EventDbStorage eventDbStorage;
+    private final DbEventService dbEventService;
 
     @Override
     public void likeTheMovie(int filmId, int userId) {
         log.info("User with id {} like the movie with {} id", userId, filmId);
         String sql = "INSERT INTO FILM_LIKES(film_id, user_id) VALUES (?, ?);";
         template.update(sql, filmId, userId);
-            Event event = Event.builder()
-                    .timestamp(System.currentTimeMillis())
-                    .userId(userId)
-                    .eventType(EventType.LIKE)
-                    .operation(Operation.ADD)
-                    .entityId(filmId)
-                    .build();
-            eventDbStorage.add(event);
+        dbEventService.add(dbEventService.createEventLike(userId, filmId, Operation.ADD));
     }
 
     public void unlikeTheMovie(int filmId, int userId) throws IncorrectValuesException {
@@ -50,14 +41,7 @@ public class DbFilmLikeService implements FilmLikeService {
         String sql = "DELETE FROM FILM_LIKES WHERE film_Id =? AND user_Id =?";
         template.update(sql, filmId, userId);
 
-            Event event = Event.builder()
-                    .timestamp(System.currentTimeMillis())
-                    .userId(userId)
-                    .eventType(EventType.LIKE)
-                    .operation(Operation.REMOVE)
-                    .entityId(filmId)
-                    .build();
-            eventDbStorage.add(event);
+        dbEventService.add(dbEventService.createEventLike(userId, filmId, Operation.REMOVE));
     }
 
     public List<Film> mostPopularFilm(Integer count) {
@@ -77,23 +61,23 @@ public class DbFilmLikeService implements FilmLikeService {
     public List<Film> getRecommendations(int id) {
         log.info("return film recommendations");
         String sql = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.mpa_id, f.rating\n" +
-                     "FROM film_likes AS fl\n" +
-                     "LEFT JOIN film AS f ON fl.film_id = f.id\n" +
-                     "WHERE user_id =\n" +
-                     "    (SELECT user_id\n" +
-                     "    FROM film_likes\n" +
-                     "    WHERE film_id IN (\n" +
-                     "      SELECT film_id\n" +
-                     "      FROM film_likes\n" +
-                     "      WHERE user_id = ?)\n" +
-                     "      AND user_id != ?\n" +
-                     "    GROUP BY user_id\n" +
-                     "    ORDER BY COUNT(film_id) DESC\n" +
-                     "    LIMIT 1)\n" +
-                     "  AND film_id NOT IN (\n" +
-                     "    SELECT film_id\n" +
-                     "    FROM film_likes\n" +
-                     "    WHERE user_id = ?)";
+                "FROM film_likes AS fl\n" +
+                "LEFT JOIN film AS f ON fl.film_id = f.id\n" +
+                "WHERE user_id =\n" +
+                "    (SELECT user_id\n" +
+                "    FROM film_likes\n" +
+                "    WHERE film_id IN (\n" +
+                "      SELECT film_id\n" +
+                "      FROM film_likes\n" +
+                "      WHERE user_id = ?)\n" +
+                "      AND user_id != ?\n" +
+                "    GROUP BY user_id\n" +
+                "    ORDER BY COUNT(film_id) DESC\n" +
+                "    LIMIT 1)\n" +
+                "  AND film_id NOT IN (\n" +
+                "    SELECT film_id\n" +
+                "    FROM film_likes\n" +
+                "    WHERE user_id = ?)";
         return template.query(sql, mapper.getFilmRawMember(), id, id, id);
     }
 }

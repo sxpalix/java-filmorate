@@ -6,29 +6,47 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
+import ru.yandex.practicum.filmorate.exceprions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Event;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.model.enums.EventType;
 import ru.yandex.practicum.filmorate.model.enums.Operation;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 @Repository
 public class EventDbStorage {
     private final JdbcTemplate jdbcTemplate;
+    private final UserDbStorage userDbStorage;
 
     @Autowired
-    public EventDbStorage(JdbcTemplate jdbcTemplate) {
+    public EventDbStorage(JdbcTemplate jdbcTemplate, UserDbStorage userDbStorage) {
         this.jdbcTemplate = jdbcTemplate;
+        this.userDbStorage = userDbStorage;
     }
 
-    public List<Event> getFeed(int id) {
+    public List<Event> getFeed(int id) throws ValidationException, IncorrectValuesException {
         log.info("get feed by id.");
-        String sql = "SELECT * FROM USER_FEED WHERE USER_ID = ?";
-        return jdbcTemplate.query(sql, this::buildEvent, id);
+
+        User user = userDbStorage.get(id);
+        if (user != null) {
+            String sql = "SELECT * FROM USER_FEED WHERE USER_ID = ?";
+            List<Event> events = jdbcTemplate.query(sql, this::buildEvent, id);
+
+            if (!events.isEmpty()) {
+                return events;
+            } else {
+                return new ArrayList<>();
+            }
+        } else {
+            throw new ValidationException("User does not exist.");
+        }
     }
 
     public void add(Event event) {
