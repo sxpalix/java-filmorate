@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.model.enums.Operation;
+import ru.yandex.practicum.filmorate.service.event.db.DbEventService;
 import ru.yandex.practicum.filmorate.service.film.db.DbFilmService;
 import ru.yandex.practicum.filmorate.service.review.ReviewService;
 import ru.yandex.practicum.filmorate.service.user.db.DbUserService;
@@ -21,12 +23,14 @@ public class DbReviewService implements ReviewService {
     private final ReviewDbStorage reviewStorage;
     private final DbFilmService filmService;
     private final DbUserService userService;
+    private final DbEventService dbEventService;
 
     @Autowired
-    public DbReviewService(ReviewDbStorage reviewStorage, DbFilmService filmService, DbUserService userService) {
+    public DbReviewService(ReviewDbStorage reviewStorage, DbFilmService filmService, DbUserService userService, DbEventService dbEventService) {
         this.reviewStorage = reviewStorage;
         this.filmService = filmService;
         this.userService = userService;
+        this.dbEventService = dbEventService;
     }
 
     @Override
@@ -34,8 +38,9 @@ public class DbReviewService implements ReviewService {
         if (get(review.getReviewId()) == null) {
             throw new IncorrectValuesException("Review not found");
         }
-
-        return reviewStorage.put(review);
+        Review newReview = reviewStorage.put(review);
+        dbEventService.add(dbEventService.createEventReview(newReview, Operation.UPDATE));
+        return newReview;
     }
 
     @Override
@@ -58,8 +63,9 @@ public class DbReviewService implements ReviewService {
         if (filmService.get(review.getFilmId()) == null || userService.get(review.getUserId()) == null) {
             throw new IncorrectValuesException("Film or user not found");
         }
-
-        return reviewStorage.post(review);
+        Review newReview = reviewStorage.post(review);
+        dbEventService.add(dbEventService.createEventReview(newReview, Operation.ADD));
+        return newReview;
     }
 
     @Override
@@ -69,6 +75,7 @@ public class DbReviewService implements ReviewService {
 
     @Override
     public void delete(Review review) throws IncorrectValuesException {
+        dbEventService.add(dbEventService.createEventReview(review, Operation.REMOVE));
         reviewStorage.delete(review);
     }
 

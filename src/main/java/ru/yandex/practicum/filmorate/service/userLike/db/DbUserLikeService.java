@@ -1,14 +1,18 @@
 package ru.yandex.practicum.filmorate.service.userLike.db;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.enums.Operation;
+import ru.yandex.practicum.filmorate.service.event.db.DbEventService;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 import ru.yandex.practicum.filmorate.service.userLike.UserLikeService;
+
 import java.util.List;
 
 @Slf4j
@@ -17,9 +21,13 @@ public class DbUserLikeService implements UserLikeService {
     private final UserService service;
     private final JdbcTemplate template;
 
-    public DbUserLikeService(@Qualifier("DbUserService") UserService service, JdbcTemplate template) {
+    private final DbEventService dbEventService;
+
+    @Autowired
+    public DbUserLikeService(@Qualifier("DbUserService") UserService service, JdbcTemplate template, DbEventService dbEventService) {
         this.service = service;
         this.template = template;
+        this.dbEventService = dbEventService;
     }
 
     @Override
@@ -29,6 +37,8 @@ public class DbUserLikeService implements UserLikeService {
         service.get(friendsId);
         String sql = "INSERT INTO FRIENDSHIP(user_id, friend_id) VALUES(?, ?)";
         template.update(sql, id, friendsId);
+
+        dbEventService.add(dbEventService.createEventFriend(id, friendsId, Operation.ADD));
     }
 
     @Override
@@ -36,6 +46,7 @@ public class DbUserLikeService implements UserLikeService {
         log.info("delete user with {} id to user with {} id as friends", id, friendsId);
         String sql = "DELETE FROM FRIENDSHIP WHERE user_id = ? AND friend_id = ?";
         template.update(sql, id, friendsId);
+        dbEventService.add(dbEventService.createEventFriend(id, friendsId, Operation.REMOVE));
     }
 
     @Override

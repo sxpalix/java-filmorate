@@ -1,14 +1,18 @@
 package ru.yandex.practicum.filmorate.controllers.users;
 import javax.validation.*;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
+import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.event.EventService;
 import ru.yandex.practicum.filmorate.service.filmLike.FilmLikeService;
 import ru.yandex.practicum.filmorate.service.user.UserService;
+
 import java.util.List;
 
 @Slf4j
@@ -18,6 +22,8 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final FilmLikeService filmLikeService;
+
+    private final EventService eventService;
 
     @GetMapping
     public List<User> getUsers() {
@@ -53,5 +59,11 @@ public class UserController {
     public List<Film> getRecommendations(@PathVariable int id) {
         log.info("GET request. Get recommendations by ID");
         return filmLikeService.getRecommendations(id);
+    }
+
+    @GetMapping("/{id}/feed")
+    public List<Event> getFeed(@PathVariable int id) throws IncorrectValuesException, ValidationException {
+        log.info("GET request. Get feed by ID");
+        return eventService.getFeed(id);
     }
 }

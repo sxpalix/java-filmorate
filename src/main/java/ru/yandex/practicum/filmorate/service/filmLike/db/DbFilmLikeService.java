@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.mapper.FilmRowMapper;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.enums.Operation;
+import ru.yandex.practicum.filmorate.service.event.db.DbEventService;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
 import ru.yandex.practicum.filmorate.service.filmLike.FilmLikeService;
 import ru.yandex.practicum.filmorate.service.user.UserService;
@@ -21,12 +23,14 @@ public class DbFilmLikeService implements FilmLikeService {
     private final JdbcTemplate template;
     private final FilmRowMapper mapper;
     private final UserService userService;
+    private final DbEventService dbEventService;
 
     @Override
     public void likeTheMovie(int filmId, int userId) {
         log.info("User with id {} like the movie with {} id", userId, filmId);
         String sql = "INSERT INTO FILM_LIKES(film_id, user_id) VALUES (?, ?);";
         template.update(sql, filmId, userId);
+        dbEventService.add(dbEventService.createEventLike(userId, filmId, Operation.ADD));
     }
 
     public void unlikeTheMovie(int filmId, int userId) throws IncorrectValuesException {
@@ -35,6 +39,8 @@ public class DbFilmLikeService implements FilmLikeService {
         userService.get(userId);
         String sql = "DELETE FROM FILM_LIKES WHERE film_Id =? AND user_Id =?";
         template.update(sql, filmId, userId);
+
+        dbEventService.add(dbEventService.createEventLike(userId, filmId, Operation.REMOVE));
     }
 
     @Override
