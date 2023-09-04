@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import ru.yandex.practicum.filmorate.model.enums.Operation;
 import ru.yandex.practicum.filmorate.model.enums.EventType;
 
-import javax.validation.constraints.NotNull;
-
 @Data
 @Builder
 @RequiredArgsConstructor
