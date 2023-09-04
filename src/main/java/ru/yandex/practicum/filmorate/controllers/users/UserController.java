@@ -1,5 +1,4 @@
-package ru.yandex.practicum.filmorate.controllers;
-
+package ru.yandex.practicum.filmorate.controllers.users;
 import javax.validation.*;
 
 import lombok.AllArgsConstructor;

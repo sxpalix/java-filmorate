@@ -1,193 +1,113 @@
 package ru.yandex.practicum.filmorate.controllers;
-
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.yandex.practicum.filmorate.service.filmLike.FilmLikeService;
-import ru.yandex.practicum.filmorate.service.user.db.DbUserService;
+import org.springframework.test.web.servlet.MvcResult;
+import ru.yandex.practicum.filmorate.model.User;
 
-@WebMvcTest(controllers = UserController.class)
+import java.time.LocalDate;
+import java.util.List;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-    @MockBean
-    private DbUserService userService;
-    @MockBean
-    private FilmLikeService filmLikeService;
+    LocalDate testDate = LocalDate.of(2001, 1, 1);
 
-    private final String defaultUser = "{\n" +
-            "  \"login\": \"dolore\",\n" +
-            "  \"name\": \"Nick Name\",\n" +
-            "  \"id\": 1,\n" +
-            "  \"email\": \"mail@mail.ru\",\n" +
-            "  \"birthday\": \"1946-08-20\"\n" +
-            "}";
+    private final User user2 = User.builder()
+            .id(0)
+            .email("rgfdearm@yandex.ru")
+            .login("bifgglbo")
+            .name("")
+            .birthday(testDate)
+            .build();
+    User firstUser = User.builder()
+            .id(0)
+            .email("asdasdasdx@yandex.ru")
+            .login("ksks")
+            .name("ksks")
+            .birthday(LocalDate.of(2001, 1, 1))
+            .build();
+
+    @BeforeAll
+    public void createUser() throws Exception {
+        this.mockMvc.perform(
+             post("/users")
+             .content(objectMapper.writeValueAsString(firstUser))
+             .contentType(MediaType.APPLICATION_JSON)
+        );
+    }
 
     @Test
-    public void shouldSuccessGetUsers() throws Exception {
-        createUser();
-
-        this.mockMvc
-                .perform(
-                        get("/users")
+    public void shouldSuccessPostUser() throws Exception {
+        this.mockMvc.perform(post("/users")
+                                .content(objectMapper.writeValueAsString(user2))
+                                .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(2))
+                .andExpect(jsonPath("$.email").value("rgfdearm@yandex.ru"))
+                .andExpect(jsonPath("$.login").value("bifgglbo"))
+                .andExpect(jsonPath("$.name").value("bifgglbo"))
+                .andExpect(jsonPath("$.birthday").value("2001-01-01"))
                 .andReturn();
     }
 
     @Test
     public void shouldSuccessUpdateUser() throws Exception {
-        createUser();
-
-        String updateUser = "{\n" +
-                "  \"login\": \"doloreUpdate\",\n" +
-                "  \"name\": \"est adipisicing\",\n" +
-                "  \"id\": 1,\n" +
-                "  \"email\": \"mail@yandex.ru\",\n" +
-                "  \"birthday\": \"1976-09-20\"\n" +
-                "}";
-
+        User user = User.builder()
+                .id(1)
+                .email("asdasdasdx@yandex.ru")
+                .login("bilbo")
+                .name("TestName")
+                .birthday(testDate)
+                .build();
         this.mockMvc
                 .perform(
                         put("/users")
-                                .content(updateUser)
-                                .contentType("application/json")
+                                .content(objectMapper.writeValueAsString(user))
+                                .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.email").value("asdasdasdx@yandex.ru"))
+                .andExpect(jsonPath("$.login").value("bilbo"))
+                .andExpect(jsonPath("$.name").value("TestName"))
+                .andExpect(jsonPath("$.birthday").value("2001-01-01"))
                 .andReturn();
     }
 
     @Test
-    public void shouldSuccessUpdateUserWithoutName() throws Exception {
-        createUser();
-
-        String updateUser = "{\n" +
-                "  \"login\": \"doloreUpdate\",\n" +
-                "  \"id\": 1,\n" +
-                "  \"email\": \"mail@yandex.ru\",\n" +
-                "  \"birthday\": \"1976-09-20\"\n" +
-                "}";
-
-        this.mockMvc
-                .perform(
-                        put("/users")
-                                .content(updateUser)
-                                .contentType("application/json")
-                )
+    public void shouldSuccessGetUser() throws Exception {
+        this.mockMvc.perform(
+                        get("/users/1").accept(MediaType.ALL))
                 .andExpect(status().isOk())
-                .andReturn();
-    }
-
-    @Test
-    public void shouldSuccessCreateUser() throws Exception {
-        this.mockMvc.perform(
-                        post("/users")
-                                .content(defaultUser)
-                                .contentType("application/json")
-                )
-                .andExpect(status().isOk())
-                .andReturn();
-    }
-
-    @Test
-    public void shouldSuccessCreateUserWithoutName() throws Exception {
-        String userWithoutName = "{\n" +
-                "  \"login\": \"common\",\n" +
-                "  \"id\": 1,\n" +
-                "  \"email\": \"friend@common.ru\",\n" +
-                "  \"birthday\": \"2000-08-20\"\n" +
-                "}";
-
-        this.mockMvc.perform(
-                        post("/users")
-                                .content(userWithoutName)
-                                .contentType("application/json")
-                )
-                .andExpect(status().isOk())
-                .andReturn();
-    }
-
-    @Test
-    public void shouldFailLoginCreateUser() throws Exception {
-        String failUser = "{\n" +
-                "\"login\": \"dolore ullamco\",\n" +
-                "\"email\": \"yandex@mail.ru\",\n" +
-                "\"birthday\": \"2446-08-20\"\n" +
-                "}";
-
-        this.mockMvc.perform(
-                        post("/users")
-                                .content(failUser)
-                                .contentType("application/json")
-                )
-                .andExpect(status().isInternalServerError())
-                .andReturn();
-    }
-
-    @Test
-    public void shouldFailEmptyLoginCreateUser() throws Exception {
-        String failUser = "{\n" +
-                "\"login\": \"\",\n" +
-                "\"email\": \"yandex@mail.ru\",\n" +
-                "\"birthday\": \"2446-08-20\"\n" +
-                "}";
-
-        this.mockMvc.perform(
-                        post("/users")
-                                .content(failUser)
-                                .contentType("application/json")
-                )
-                .andExpect(status().isInternalServerError())
-                .andReturn();
-    }
-
-    @Test
-    public void shouldFailEmailCreateUser() throws Exception {
-        String failUser = "{" +
-                "\"login\": \"doloreUllamco\",\n" +
-                "\"name\": \"\",\n" +
-                "\"email\": \"mail.ru\",\n" +
-                "\"birthday\": \"1980-08-20\"" +
-                "}";
-
-        this.mockMvc.perform(
-                        post("/users")
-                                .content(failUser)
-                                .contentType("application/json")
-                )
-                .andExpect(status().isInternalServerError())
-                .andReturn();
-    }
-
-    @Test
-    public void shouldFailBirthdateCreateUser() throws Exception {
-        String failUser = "{" +
-                "\"login\": \"doloreUllamco\",\n" +
-                "\"name\": \"\",\n" +
-                "\"email\": \"test@mail.ru\",\n" +
-                "\"birthday\": \"2446-08-20\"" +
-                "}";
-
-        this.mockMvc.perform(
-                        post("/users")
-                                .content(failUser)
-                                .contentType("application/json")
-                )
-                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.email").value("asdasdasdx@yandex.ru"))
+                .andExpect(jsonPath("$.login").value("ksks"))
+                .andExpect(jsonPath("$.name").value("ksks"))
+                .andExpect(jsonPath("$.birthday").value("2001-01-01"))
                 .andReturn();
     }
 
     @Test
     public void shouldDeleteUser() throws Exception {
-        createUser();
-
         this.mockMvc
                 .perform(
                         delete("/users/1")
@@ -197,22 +117,26 @@ class UserControllerTest {
     }
 
     @Test
+    public void shouldSuccessGetAllUsers() throws Exception {
+        MvcResult result = mockMvc.perform(get("/users").accept(MediaType.ALL))
+                .andExpect(status().isOk())
+                .andExpect(handler().methodName("getUsers"))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        List<User> users = objectMapper.readValue(result.getResponse().getContentAsString(),
+                objectMapper.readerForListOf(User.class).getValueType());
+
+        assertEquals(1, users.size(), String.format("Ожидался firstUser получен %s", users));
+    }
+
+    @Test
     public void shouldNotSendErrorWhenDeleteUserWithBadId() throws Exception {
         this.mockMvc
                 .perform(
                         delete("/users/-9999")
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().isNotFound())
                 .andReturn();
     }
-
-    private void createUser() throws Exception {
-        this.mockMvc.perform(
-                post("/users")
-                        .content(defaultUser)
-                        .contentType("application/json")
-        );
-    }
-
-
 }
