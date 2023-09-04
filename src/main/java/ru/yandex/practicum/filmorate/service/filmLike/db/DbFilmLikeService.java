@@ -13,7 +13,6 @@ import ru.yandex.practicum.filmorate.service.filmLike.FilmLikeService;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 
 import java.util.List;
-import java.util.Optional;
 
 @SuppressWarnings("checkstyle:Regexp")
 @Slf4j
