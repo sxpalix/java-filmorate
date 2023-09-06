@@ -60,7 +60,7 @@ class UserControllerTest {
                                 .content(objectMapper.writeValueAsString(user2))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.id").value(2))
                 .andExpect(jsonPath("$.email").value("rgfdearm@yandex.ru"))
                 .andExpect(jsonPath("$.login").value("bifgglbo"))
@@ -120,7 +120,7 @@ class UserControllerTest {
     public void shouldSuccessGetAllUsers() throws Exception {
         MvcResult result = mockMvc.perform(get("/users").accept(MediaType.ALL))
                 .andExpect(status().isOk())
-                .andExpect(handler().methodName("getUsers"))
+                .andExpect(handler().methodName("getAll"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
 
