@@ -25,7 +25,7 @@ public class Film {
     @NotBlank
     private String description;
     private LocalDate releaseDate;
-    @Min(value = 0, message = "Duration should be more then 0")
+    @Min(value = 1, message = "Duration should be more then 0")
     private int duration;
     private double rating;
     @NotNull

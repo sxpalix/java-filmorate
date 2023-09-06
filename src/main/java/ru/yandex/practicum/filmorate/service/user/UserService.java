@@ -11,7 +11,7 @@ public interface UserService {
 
     User put(User user) throws ValidationException, IncorrectValuesException;
 
-    User get(int id) throws IncorrectValuesException;
+    User getUserById(int id) throws IncorrectValuesException;
 
     void delete(User user) throws IncorrectValuesException;
 }

@@ -115,7 +115,8 @@ public class FilmDbStorage implements Storage<Film> {
     @Override
     public void delete(Film film) throws IncorrectValuesException {
         if (film == null) {
-            throw new IncorrectValuesException("User not found");
+            log.info("NULL can not find film");
+            throw new IncorrectValuesException("Film not found");
         } else {
             String sql = "DELETE FROM FILM WHERE ID = ?";
             template.update(sql, film.getId());

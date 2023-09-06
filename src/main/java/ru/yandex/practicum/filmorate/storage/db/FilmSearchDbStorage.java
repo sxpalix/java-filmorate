@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component("FilmSearchDbStorage")
 public class FilmSearchDbStorage {
-
 	private final JdbcTemplate template;
 	private final FilmRowMapper mapper;
 

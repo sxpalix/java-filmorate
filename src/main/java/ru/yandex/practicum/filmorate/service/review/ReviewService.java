@@ -13,17 +13,17 @@ public interface ReviewService {
 
     Review post(Review review) throws ValidationException, IncorrectValuesException;
 
-    Review get(int id) throws IncorrectValuesException;
+    Review getById(int id) throws IncorrectValuesException;
 
-    void delete(Review review) throws IncorrectValuesException;
+    void deleteById(Review review) throws IncorrectValuesException;
 
-    void addLike(int reviewId, int userId) throws IncorrectValuesException;
+    Review addLike(int reviewId, int userId) throws IncorrectValuesException;
 
-    void addDislike(int reviewId, int userId) throws IncorrectValuesException;
+    Review addDislike(int reviewId, int userId) throws IncorrectValuesException;
 
-    void deleteLike(int reviewId, int userId) throws IncorrectValuesException;
+    Review deleteLike(int reviewId, int userId) throws IncorrectValuesException;
 
-    void deleteDislike(int reviewId, int userId) throws IncorrectValuesException;
+    Review deleteDislike(int reviewId, int userId) throws IncorrectValuesException;
 
     List<Review> getByFilmId(int filmId, int count);
 }

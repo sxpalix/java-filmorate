@@ -26,21 +26,22 @@ public class DbFilmLikeService implements FilmLikeService {
     private final DbEventService dbEventService;
 
     @Override
-    public void likeTheMovie(int filmId, int userId) {
+    public Film likeFilm(int filmId, int userId) throws IncorrectValuesException {
         log.info("User with id {} like the movie with {} id", userId, filmId);
         String sql = "INSERT INTO FILM_LIKES(film_id, user_id) VALUES (?, ?);";
         template.update(sql, filmId, userId);
         dbEventService.add(dbEventService.createEventLike(userId, filmId, Operation.ADD));
+        return filmService.getFilm(filmId);
     }
 
-    public void unlikeTheMovie(int filmId, int userId) throws IncorrectValuesException {
+    public Film unlikeFilm(int filmId, int userId) throws IncorrectValuesException {
         log.info("User with id {} dislike the movie with {} id", userId, filmId);
-        filmService.get(filmId);
-        userService.get(userId);
+        filmService.getFilm(filmId);
+        userService.getUserById(userId);
         String sql = "DELETE FROM FILM_LIKES WHERE film_Id =? AND user_Id =?";
         template.update(sql, filmId, userId);
-
         dbEventService.add(dbEventService.createEventLike(userId, filmId, Operation.REMOVE));
+        return filmService.getFilm(filmId);
     }
 
     @Override

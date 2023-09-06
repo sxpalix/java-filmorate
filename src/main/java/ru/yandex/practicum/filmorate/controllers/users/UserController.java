@@ -3,6 +3,7 @@ import javax.validation.*;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
@@ -22,48 +23,55 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final FilmLikeService filmLikeService;
-
     private final EventService eventService;
 
     @GetMapping
-    public List<User> getUsers() {
-        log.info("GET request");
+    @ResponseStatus(HttpStatus.OK)
+    public List<User> getAll() {
+        log.info("GET all users");
         return userService.getAll();
     }
 
     @PostMapping
-    public User postUser(@Valid @RequestBody User user) throws ValidationException, IncorrectValuesException {
-        log.info("Post Request");
+    @ResponseStatus(HttpStatus.CREATED)
+    public User post(@Valid @RequestBody User user) throws ValidationException, IncorrectValuesException {
+        log.info("POST new user");
         return userService.post(user);
     }
 
     @PutMapping
-    public User putUser(@Valid @RequestBody User user) throws ValidationException, IncorrectValuesException {
-        log.info("PUT request");
+    @ResponseStatus(HttpStatus.OK)
+    public User put(@Valid @RequestBody User user) throws ValidationException, IncorrectValuesException {
+        log.info("PUT updated user");
         return userService.put(user);
     }
 
     @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public User getUser(@PathVariable int id) throws IncorrectValuesException {
-        log.info("GET request. Get user by ID");
-        return userService.get(id);
+        log.info("GET user by ID");
+        return userService.getUserById(id);
     }
 
     @DeleteMapping(value = "/{id}")
-    public void deleteUser(@PathVariable int id) throws IncorrectValuesException {
-        log.info("DELETE Request. Delete user by ID");
-        userService.delete(userService.get(id));
+    @ResponseStatus(HttpStatus.OK)
+    public String delete(@PathVariable int id) throws IncorrectValuesException {
+        log.info("DELETE user by ID");
+        userService.delete(userService.getUserById(id));
+        return "User successfully deleted";
     }
 
     @GetMapping("/{id}/recommendations")
+    @ResponseStatus(HttpStatus.OK)
     public List<Film> getRecommendations(@PathVariable int id) {
-        log.info("GET request. Get recommendations by ID");
+        log.info("GET recommendations by ID");
         return filmLikeService.getRecommendations(id);
     }
 
     @GetMapping("/{id}/feed")
+    @ResponseStatus(HttpStatus.OK)
     public List<Event> getFeed(@PathVariable int id) throws IncorrectValuesException, ValidationException {
-        log.info("GET request. Get feed by ID");
+        log.info("GET feed by ID");
         return eventService.getFeed(id);
     }
 }
