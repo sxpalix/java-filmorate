@@ -57,7 +57,7 @@ class FilmControllerTest {
                                 .content(defaultFilm)
                                 .contentType("application/json")
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().is2xxSuccessful())
                 .andReturn();
     }
 
