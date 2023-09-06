@@ -1,6 +1,8 @@
 package ru.yandex.practicum.filmorate.service.event.db;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
@@ -15,12 +17,9 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class DbEventService implements EventService {
-    private EventDbStorage storage;
-
-    public DbEventService(EventDbStorage storage) {
-        this.storage = storage;
-    }
+    private final EventDbStorage storage;
 
     @Override
     public List<Event> getFeed(int id) throws ValidationException, IncorrectValuesException {

@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service.filmSearch;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,14 +12,9 @@ import java.util.List;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class DbFilmSearchService implements FilmSearchService {
-
 	private final FilmSearchDbStorage storage;
-
-	@Autowired
-	public DbFilmSearchService(FilmSearchDbStorage storage) {
-		this.storage = storage;
-	}
 
 	@Override
 	public List<Film> searchFilm(String query, List<String> by) throws IncorrectValuesException {

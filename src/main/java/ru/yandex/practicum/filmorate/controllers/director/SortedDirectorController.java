@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controllers.director;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -15,8 +16,9 @@ public class SortedDirectorController {
     private SortedDirectorService service;
 
     @GetMapping("/{directorId}")
+    @ResponseStatus(HttpStatus.OK)
     public List<Film> sortedDirectorsList(@PathVariable int directorId, @RequestParam String sortBy) throws IncorrectValuesException {
-        log.info("Sort directors film by {}", sortBy);
+        log.info("GET Sort directors film by {}", sortBy);
         return service.sortedDirector(directorId, sortBy);
     }
 }

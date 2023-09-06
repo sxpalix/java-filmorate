@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service.review.db;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,23 +20,16 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service("DbReviewService")
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class DbReviewService implements ReviewService {
     private final ReviewDbStorage reviewStorage;
     private final DbFilmService filmService;
     private final DbUserService userService;
     private final DbEventService dbEventService;
 
-    @Autowired
-    public DbReviewService(ReviewDbStorage reviewStorage, DbFilmService filmService, DbUserService userService, DbEventService dbEventService) {
-        this.reviewStorage = reviewStorage;
-        this.filmService = filmService;
-        this.userService = userService;
-        this.dbEventService = dbEventService;
-    }
-
     @Override
     public Review put(Review review) throws ValidationException, IncorrectValuesException {
-        if (get(review.getReviewId()) == null) {
+        if (getById(review.getReviewId()) == null) {
             throw new IncorrectValuesException("Review not found");
         }
         Review newReview = reviewStorage.put(review);
@@ -45,12 +39,10 @@ public class DbReviewService implements ReviewService {
 
     @Override
     public List<Review> getAll(Integer filmId, Integer count) {
-        List<Review> allReviews = reviewStorage.getAll().stream()
-                .sorted(Comparator.comparingLong(Review::getUseful).reversed())
-                .collect(Collectors.toList());
-
         if (filmId == null || filmId < 1) {
-            return allReviews;
+            return reviewStorage.getAll().stream()
+                    .sorted(Comparator.comparingLong(Review::getUseful).reversed())
+                    .collect(Collectors.toList());
         } else if (count == null || count < 1) {
             return getByFilmId(filmId, 10);
         } else {
@@ -60,7 +52,7 @@ public class DbReviewService implements ReviewService {
 
     @Override
     public Review post(Review review) throws ValidationException, IncorrectValuesException {
-        if (filmService.get(review.getFilmId()) == null || userService.get(review.getUserId()) == null) {
+        if (filmService.getFilm(review.getFilmId()) == null || userService.getUserById(review.getUserId()) == null) {
             throw new IncorrectValuesException("Film or user not found");
         }
         Review newReview = reviewStorage.post(review);
@@ -69,38 +61,42 @@ public class DbReviewService implements ReviewService {
     }
 
     @Override
-    public Review get(int id) throws IncorrectValuesException {
+    public Review getById(int id) throws IncorrectValuesException {
         return reviewStorage.get(id);
     }
 
     @Override
-    public void delete(Review review) throws IncorrectValuesException {
+    public void deleteById(Review review) throws IncorrectValuesException {
         dbEventService.add(dbEventService.createEventReview(review, Operation.REMOVE));
         reviewStorage.delete(review);
     }
 
     @Override
-    public void addLike(int reviewId, int userId) throws IncorrectValuesException {
+    public Review addLike(int reviewId, int userId) throws IncorrectValuesException {
         checkReviewUser(reviewId, userId);
         reviewStorage.addLike(reviewId, userId);
+        return reviewStorage.get(reviewId);
     }
 
     @Override
-    public void addDislike(int reviewId, int userId) throws IncorrectValuesException {
+    public Review addDislike(int reviewId, int userId) throws IncorrectValuesException {
         checkReviewUser(reviewId, userId);
         reviewStorage.addDislike(reviewId, userId);
+        return reviewStorage.get(reviewId);
     }
 
     @Override
-    public void deleteLike(int reviewId, int userId) throws IncorrectValuesException {
+    public Review deleteLike(int reviewId, int userId) throws IncorrectValuesException {
         checkReviewUser(reviewId, userId);
         reviewStorage.deleteLike(reviewId, userId);
+        return reviewStorage.get(reviewId);
     }
 
     @Override
-    public void deleteDislike(int reviewId, int userId) throws IncorrectValuesException {
+    public Review deleteDislike(int reviewId, int userId) throws IncorrectValuesException {
         checkReviewUser(reviewId, userId);
         reviewStorage.deleteDislike(reviewId, userId);
+        return reviewStorage.get(reviewId);
     }
 
     @Override
@@ -112,7 +108,7 @@ public class DbReviewService implements ReviewService {
     }
 
     private void checkReviewUser(int reviewId, int userId) throws IncorrectValuesException {
-        if (get(reviewId) == null || userService.get(userId) == null) {
+        if (getById(reviewId) == null || userService.getUserById(userId) == null) {
             throw new IncorrectValuesException("Review or user not found");
         }
     }

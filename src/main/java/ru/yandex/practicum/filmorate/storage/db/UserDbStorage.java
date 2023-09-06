@@ -79,6 +79,7 @@ public class UserDbStorage implements Storage<User> {
     public void delete(User user) throws IncorrectValuesException {
         log.info("delete user from database by id");
         if (user == null) {
+            log.info("NULL can not find user");
             throw new IncorrectValuesException("User not found");
         } else {
             String sql = "DELETE FROM USERS WHERE ID = ?";
@@ -88,8 +89,8 @@ public class UserDbStorage implements Storage<User> {
 
     private User getById(int id) {
         log.info("get user from database by id");
-        String sqlByEmail = "SELECT * FROM Users WHERE ID = ?";
-        return template.query(sqlByEmail, new BeanPropertyRowMapper<>(User.class), id)
+        String sql = "SELECT * FROM Users WHERE ID = ?";
+        return template.query(sql, new BeanPropertyRowMapper<>(User.class), id)
                 .stream()
                 .findAny()
                 .orElse(null);

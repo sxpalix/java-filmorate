@@ -17,8 +17,8 @@ import java.util.List;
 
 @Component
 public class FilmRowMapper {
-    MpaDbStorage mpaDbStorage;
-    JdbcTemplate template;
+    private MpaDbStorage mpaDbStorage;
+    private final JdbcTemplate template;
 
     @Autowired
     public FilmRowMapper(MpaDbStorage mpaDbStorage, JdbcTemplate template) {

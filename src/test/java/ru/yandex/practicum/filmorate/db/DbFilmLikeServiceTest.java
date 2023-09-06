@@ -45,7 +45,7 @@ public class DbFilmLikeServiceTest {
     public void beforeEach() throws ValidationException, IncorrectValuesException {
         userDbStorage.post(user);
         filmDbStorage.post(film);
-        filmLikeService.likeTheMovie(1, 1);
+        filmLikeService.likeFilm(1, 1);
     }
 
     @Test

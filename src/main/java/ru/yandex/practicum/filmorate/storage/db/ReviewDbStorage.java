@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.db;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -18,8 +19,9 @@ import java.util.List;
 @Slf4j
 @Component("ReviewDbStorage")
 public class ReviewDbStorage {
-    JdbcTemplate template;
+    private final JdbcTemplate template;
 
+    @Autowired
     public ReviewDbStorage(JdbcTemplate template) {
         this.template = template;
     }
