@@ -18,17 +18,16 @@ public class FilmLikeController {
 
     @PutMapping(path = "/{id}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public void likeTheMovie(@PathVariable int id, @PathVariable int userId) throws IncorrectValuesException {
+    public Film likeFilm(@PathVariable int id, @PathVariable int userId) throws IncorrectValuesException {
         log.info("PUT like for film");
-        service.likeFilm(id, userId);
+        return service.likeFilm(id, userId);
     }
 
     @DeleteMapping(path = "/{id}/like/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public String unlikeTheMovie(@PathVariable int id, @PathVariable int userId) throws IncorrectValuesException {
+    public Film unlikeFilm(@PathVariable int id, @PathVariable int userId) throws IncorrectValuesException {
         log.info("DELETE like from film");
-        service.unlikeFilm(id, userId);
-        return "Like successfully deleted from film";
+        return service.unlikeFilm(id, userId);
     }
 
     @GetMapping(path = "/popular")

@@ -34,6 +34,7 @@ public class DbFilmLikeService implements FilmLikeService {
         return filmService.getFilm(filmId);
     }
 
+    @Override
     public Film unlikeFilm(int filmId, int userId) throws IncorrectValuesException {
         log.info("User with id {} dislike the movie with {} id", userId, filmId);
         filmService.getFilm(filmId);

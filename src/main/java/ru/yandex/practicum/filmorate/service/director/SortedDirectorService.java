@@ -18,7 +18,7 @@ public class SortedDirectorService {
     private final JdbcTemplate template;
     private final FilmRowMapper mapper;
 
-    public List<Film> sortedDirector(int id, String sortedBy) throws IncorrectValuesException {
+    public List<Film> getDirectorsSortedList(int id, String sortedBy) throws IncorrectValuesException {
         List<Film> films = new ArrayList<>();
         if (sortedBy.equals("year")) {
             String sql = "SELECT * FROM FILM\n" +
