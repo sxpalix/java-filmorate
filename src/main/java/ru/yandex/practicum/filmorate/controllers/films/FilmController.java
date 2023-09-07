@@ -19,21 +19,21 @@ public class FilmController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Film> getFilms() {
+    public List<Film> getAll() {
         log.info("GET all films");
         return filmService.getAll();
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Film postFilm(@Valid @RequestBody Film film) throws ValidationException, IncorrectValuesException {
+    public Film post(@Valid @RequestBody Film film) throws ValidationException, IncorrectValuesException {
         log.info("POST new film");
         return filmService.post(film);
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public Film putFilm(@Valid @RequestBody Film film) throws ValidationException, IncorrectValuesException {
+    public Film put(@Valid @RequestBody Film film) throws ValidationException, IncorrectValuesException {
         log.info("PUT updated film");
         return filmService.put(film);
     }
@@ -47,7 +47,7 @@ public class FilmController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public String deleteFilm(@PathVariable int id) throws IncorrectValuesException {
+    public String delete(@PathVariable int id) throws IncorrectValuesException {
         log.info("DELETE film by ID");
         filmService.delete(filmService.getFilm(id));
         return "Film successfully deleted";
