@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.service.film.db;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
@@ -12,13 +12,9 @@ import java.util.List;
 
 @Slf4j
 @Service("DbFilmService")
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class DbFilmService implements FilmService {
     private final Storage<Film> storage;
-
-    @Autowired
-    public DbFilmService(@Qualifier("FilmDbStorage")Storage<Film> storage) {
-        this.storage = storage;
-    }
 
     @Override
     public Film put(Film film) throws ValidationException, IncorrectValuesException {
@@ -36,7 +32,12 @@ public class DbFilmService implements FilmService {
     }
 
     @Override
-    public Film get(int id) throws IncorrectValuesException {
+    public Film getFilm(int id) throws IncorrectValuesException {
         return storage.get(id);
+    }
+
+    @Override
+    public void delete(Film film) throws IncorrectValuesException {
+        storage.delete(film);
     }
 }

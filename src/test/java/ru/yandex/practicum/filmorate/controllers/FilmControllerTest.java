@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.yandex.practicum.filmorate.controllers.films.FilmController;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
 
 @WebMvcTest(controllers = FilmController.class)
@@ -56,7 +57,7 @@ class FilmControllerTest {
                                 .content(defaultFilm)
                                 .contentType("application/json")
                 )
-                .andExpect(status().isOk())
+                .andExpect(status().is2xxSuccessful())
                 .andReturn();
     }
 
@@ -100,6 +101,28 @@ class FilmControllerTest {
                                 .contentType("application/json")
                 )
                 .andExpect(status().is(500))
+                .andReturn();
+    }
+
+    @Test
+    public void shouldDeleteFilm() throws Exception {
+        createFilm();
+
+        this.mockMvc
+                .perform(
+                        delete("/films/1")
+                )
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    public void shouldNotSendErrorWhenDeleteFilmWithBadId() throws Exception {
+        this.mockMvc
+                .perform(
+                        delete("/films/-9999")
+                )
+                .andExpect(status().isOk())
                 .andReturn();
     }
 

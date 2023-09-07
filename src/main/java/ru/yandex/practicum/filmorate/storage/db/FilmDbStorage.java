@@ -2,15 +2,22 @@ package ru.yandex.practicum.filmorate.storage.db;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.FilmRowMapper;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.Storage;
 import ru.yandex.practicum.filmorate.storage.validation.Valid;
+
+import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Component("FilmDbStorage")
@@ -40,6 +47,11 @@ public class FilmDbStorage implements Storage<Film> {
         for (Genre genre: film.getGenres()) {
             template.update(saveFilmGenre, id, genre.getId());
         }
+        template.update("DELETE FROM FILM_DIRECTOR WHERE FILM_ID=?", film.getId());
+        String saveFilmDirector = "INSERT INTO FILM_DIRECTOR(FILM_ID, DIRECTOR_ID) VALUES (?, ?)";
+        for (Director director : film.getDirectors()) {
+            template.update(saveFilmDirector, film.getId(), director.getId());
+        }
         return get(film.getId());
     }
 
@@ -54,16 +66,35 @@ public class FilmDbStorage implements Storage<Film> {
     public Film post(Film film) throws ValidationException {
         log.info("post film into date base");
         valid.validations(film);
-        String sql = "INSERT INTO FILM(id, name, description, release_date, duration, mpa_id, rating)" +
-                " VALUES (DEFAULT, ?, ?, ?, ?, ?, ?);";
-        template.update(sql, film.getName(), film.getDescription(), film.getReleaseDate(),
-                film.getDuration(), film.getMpa().getId(), film.getRating());
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        String sql = "INSERT INTO FILM(name, description, release_date, duration, mpa_id, rating)" +
+                " VALUES (?, ?, ?, ?, ?, ?);";
+        template.update(connection -> {
+            PreparedStatement stmt = connection.prepareStatement(sql,  new String[]{"id"});
+            stmt.setString(1, film.getName());
+            stmt.setString(2, film.getDescription());
+            stmt.setDate(3, Date.valueOf(film.getReleaseDate()));
+            stmt.setLong(4, film.getDuration());
+            stmt.setInt(5, film.getMpa().getId());
+            stmt.setDouble(6, film.getRating());
+
+            return stmt;
+        }, keyHolder);
+        film.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
+
         String saveFilmGenre = "INSERT INTO FILM_GENRES(FILM_ID, GENRE_ID) VALUES (?, ?)";
-        int id = getByName(film.getName()).getId();
         for (Genre genre: film.getGenres()) {
-            template.update(saveFilmGenre, id, genre.getId());
+            template.update(saveFilmGenre, film.getId(), genre.getId());
         }
-        return getByName(film.getName());
+
+        String saveFilmDirector = "INSERT INTO FILM_DIRECTOR(FILM_ID, DIRECTOR_ID) VALUES (?, ?)";
+        for (Director director : film.getDirectors()) {
+            template.update(saveFilmDirector, film.getId(), director.getId());
+        }
+
+        return getById(film.getId());
     }
 
     @Override
@@ -81,8 +112,19 @@ public class FilmDbStorage implements Storage<Film> {
         }
     }
 
-    private Film getByName(String name) {
-        String sqlByName = "SELECT * FROM FILM WHERE name = ?;";
-        return template.query(sqlByName, mapper.getFilmRawMember(), name).stream().findAny().orElse(null);
+    @Override
+    public void delete(Film film) throws IncorrectValuesException {
+        if (film == null) {
+            log.info("NULL can not find film");
+            throw new IncorrectValuesException("Film not found");
+        } else {
+            String sql = "DELETE FROM FILM WHERE ID = ?";
+            template.update(sql, film.getId());
+        }
+    }
+
+    private Film getById(int id) {
+        String sqlByName = "SELECT * FROM FILM WHERE ID = ?;";
+        return template.query(sqlByName, mapper.getFilmRawMember(), id).stream().findAny().orElse(null);
     }
 }

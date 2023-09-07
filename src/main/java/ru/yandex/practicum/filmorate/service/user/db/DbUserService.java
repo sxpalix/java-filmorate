@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service.user.db;
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceprions.IncorrectValuesException;
 import ru.yandex.practicum.filmorate.exceprions.ValidationException;
@@ -9,12 +10,9 @@ import ru.yandex.practicum.filmorate.storage.Storage;
 import java.util.List;
 
 @Service("DbUserService")
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class DbUserService implements UserService {
     private final Storage<User> storage;
-
-    public DbUserService(@Qualifier("UserDbStorage") Storage<User> storage) {
-        this.storage = storage;
-    }
 
     private void validations(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
@@ -40,7 +38,12 @@ public class DbUserService implements UserService {
     }
 
     @Override
-    public User get(int id) throws IncorrectValuesException {
+    public User getUserById(int id) throws IncorrectValuesException {
         return storage.get(id);
+    }
+
+    @Override
+    public void delete(User user) throws IncorrectValuesException {
+        storage.delete(user);
     }
 }
